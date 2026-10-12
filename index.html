@@ -1,0 +1,1828 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>1. svetová vojna – dejepis</title>
+<meta name="description" content="Učebná appka z dejepisu: 1. svetová vojna. Výklad po témach, skúška po každej téme a veľký test na známku.">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="1. sv. vojna">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+  :root{
+    --accent:#2563eb;
+    --soft:#e8f0ff;
+    --ink:#1b2333;
+    --muted:#5d6b85;
+    --ok:#15803d;
+    --bad:#dc2626;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:#f3f1fb;
+    min-height:100vh;
+    line-height:1.5;
+  }
+  /* prechod na pozadi je na pevnej vrstve, lebo background-attachment:fixed na iPhone nefunguje */
+  body::before{
+    content:"";position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;
+    background:linear-gradient(160deg,#eef4ff 0%,#f6efff 45%,#fff3e8 100%);
+  }
+  .wrap{
+    max-width:720px;margin:0 auto;
+    padding:16px 14px 56px;
+    padding-left:max(14px, env(safe-area-inset-left));
+    padding-right:max(14px, env(safe-area-inset-right));
+  }
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  /* na uzkom mobile by sa stitok do listy nezmestil; nazov obrazovky je aj v karte pod nou */
+  .topbar .pill{display:none;white-space:nowrap;}
+  .logo{
+    font-size:22px;font-weight:800;letter-spacing:-0.5px;cursor:pointer;
+    background:linear-gradient(90deg,#15803d,#2563eb 45%,#c2410c);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .spacer{flex:1;}
+  .card{
+    background:#fff;border-radius:18px;padding:18px;
+    box-shadow:0 10px 26px rgba(29,45,86,.10);
+    margin-bottom:14px;
+  }
+  .card.center{text-align:center;}
+  h1{font-size:25px;line-height:1.2;margin:0 0 6px;}
+  h2{font-size:20px;line-height:1.3;margin:0 0 10px;}
+  h3{font-size:17px;margin:0 0 8px;}
+  h4{font-size:15px;margin:0 0 6px;}
+  p{margin:0 0 10px;}
+  .muted{color:var(--muted);}
+  .small{font-size:14px;}
+  .kicker{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin-bottom:4px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    padding:13px 20px;border:none;border-radius:14px;cursor:pointer;
+    font-size:16px;font-weight:700;font-family:inherit;line-height:1.25;
+    background:var(--accent);color:#fff;
+    box-shadow:0 4px 12px rgba(29,45,86,.18);
+    transition:transform .08s ease, filter .15s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;padding:11px 18px;}
+  .btn.grey{background:#eef1f7;color:#41506b;box-shadow:none;}
+  .btn.big{font-size:18px;padding:16px 22px;border-radius:16px;}
+  .btn.small{font-size:14px;padding:8px 14px;border-radius:10px;}
+  .btn.wide{width:100%;}
+  .btn:disabled{opacity:.45;cursor:default;transform:none;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .col{display:flex;flex-direction:column;gap:10px;}
+  .pill{
+    display:inline-block;padding:5px 12px;border-radius:999px;
+    background:var(--soft);color:var(--accent);font-weight:700;font-size:14px;
+  }
+  .sound{
+    border:2px solid #dfe5f1;background:#fff;border-radius:12px;width:44px;height:40px;
+    font-size:18px;cursor:pointer;
+  }
+  .bar{height:12px;border-radius:999px;background:#e5eaf4;overflow:hidden;margin:10px 0 6px;}
+  .bar span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s ease;}
+
+  /* ---- cesta temami ---- */
+  .path{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+  .step{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    font-family:inherit;font-size:16px;color:inherit;cursor:pointer;
+    background:#fff;border-radius:18px;padding:13px 14px;
+    box-shadow:0 6px 18px rgba(29,45,86,.08);
+    border:2px solid transparent;
+  }
+  .step .num{
+    flex:0 0 44px;height:44px;border-radius:14px;background:var(--soft);color:var(--accent);
+    font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;
+  }
+  .step.done .num{background:#e3f6ea;color:var(--ok);}
+  .step.next{border-color:var(--accent);}
+  .step .tt{font-weight:700;line-height:1.3;}
+  .step .ss{font-size:13.5px;color:var(--muted);line-height:1.35;margin-top:2px;}
+  .step .chev{margin-left:auto;color:#a8b3c9;font-size:24px;flex:0 0 auto;}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px;}
+  .tab{
+    border:2px solid #dfe5f1;background:#fff;border-radius:999px;padding:8px 16px;
+    font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;color:#41506b;
+  }
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .linkbtn{background:none;border:none;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer;}
+
+  /* ---- vyklad ---- */
+  .pts{margin:0;padding-left:20px;}
+  .pts li{margin-bottom:8px;}
+  .pts li:last-child{margin-bottom:0;}
+  .pts b, .term b, .dates b{color:var(--accent);}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .two .side{background:var(--soft);border-radius:14px;padding:12px;}
+  .two .side.b{background:#fff3e8;}
+  .two .side h4{color:var(--accent);}
+  .two .side.b h4{color:#c2410c;}
+  /* zoznamy blokov maju rovnake farby ako mapa: Centralne mocnosti oranzova, Dohoda modra */
+  .two.blocs .side{background:#fff1e6;}
+  .two.blocs .side h4{color:#c2410c;}
+  .two.blocs .side.b{background:#e8f0ff;}
+  .two.blocs .side.b h4{color:#2563eb;}
+  .two ul{margin:0;padding-left:18px;}
+  .two li{margin-bottom:4px;}
+  .term{
+    border-left:6px solid var(--accent);background:var(--soft);
+    border-radius:0 14px 14px 0;padding:12px 14px;
+  }
+  .term h3{color:var(--accent);margin-bottom:2px;}
+  .term p{margin:0;}
+  .note{border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:15.5px;}
+  .note.tip{background:#fffbea;border:2px solid #f5d67a;}
+  .note.extra{background:#fff;border:2px dashed #a8b3c9;}
+  .note .nh{font-weight:800;display:block;margin-bottom:2px;}
+  .dates{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:baseline;}
+  .dates .d{font-weight:800;color:var(--accent);white-space:nowrap;}
+  .must{border:2px solid var(--accent);}
+  .dock{
+    position:-webkit-sticky;position:sticky;bottom:0;z-index:5;display:flex;gap:10px;
+    margin:0 -14px;padding:10px 14px;
+    padding-bottom:max(10px, env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.94);border-top:1px solid #e3e8f2;
+  }
+  .dock .btn{flex:1;}
+  .dock .btn.grey{flex:0 0 auto;}
+
+  /* ---- schematicka mapa ---- */
+  .map{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:46px;gap:6px;margin:6px 0 10px;}
+  .tile{
+    border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:800;font-size:12.5px;line-height:1.15;padding:2px 3px;color:#fff;
+  }
+  .tile.d{background:#2563eb;}
+  .tile.c{background:#c2410c;}
+  .tile.n{background:#e5eaf4;color:#41506b;}
+  .tile.new{background:#15803d;}
+  .tile.old{background:#e5eaf4;color:#41506b;}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:var(--muted);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px;}
+
+  /* ---- otazky ---- */
+  .opts{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .opt{
+    text-align:left;font-family:inherit;font-size:16px;cursor:pointer;color:inherit;
+    background:#f5f7fb;border:2px solid #e3e8f2;border-radius:14px;
+    padding:12px 14px;display:flex;gap:10px;align-items:flex-start;width:100%;
+  }
+  .opt .lettr{
+    flex:0 0 28px;height:28px;border-radius:8px;background:#fff;
+    border:2px solid #d7deec;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:14px;
+  }
+  .opt .tag{margin-left:auto;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;padding-top:5px;}
+  /* oznacenie pred kontrolou je tmave, nie vo farbe temy, aby sa neplietlo so zelenou "spravne" */
+  .opt.on{border-color:var(--ink);background:#eef1f7;}
+  .opt.on .lettr{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .opt.correct{background:#e7f8ee;border-color:var(--ok);}
+  .opt.correct .lettr{background:#fff;border-color:var(--ok);color:var(--ok);}
+  .opt.wrong{background:#fdecec;border-color:var(--bad);}
+  .opt.wrong .lettr{background:#fff;border-color:var(--bad);color:var(--bad);}
+  .opt.missed{background:#fff;border:2px dashed var(--ok);}
+  .opt.missed .tag{color:var(--ok);}
+  .opt.wrong .tag{color:var(--bad);}
+  .opt:disabled{cursor:default;color:inherit;opacity:1;}
+  .grp{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .grow{background:#f5f7fb;border:2px solid #e3e8f2;border-radius:14px;padding:10px 12px;}
+  .grow.okrow{background:#e7f8ee;border-color:var(--ok);}
+  .grow.badrow{background:#fdecec;border-color:var(--bad);}
+  .gname{font-weight:700;margin-bottom:8px;}
+  .gbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .gb{
+    font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;line-height:1.2;
+    border:2px solid #d7deec;background:#fff;color:#41506b;border-radius:10px;padding:9px 6px;
+  }
+  .gb.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .gb.right{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .gb.wrongsel{background:#fff;border-color:var(--bad);color:var(--bad);text-decoration:line-through;}
+  .gb:disabled{cursor:default;opacity:1;}
+  .txtwrap{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .txtin{
+    flex:1 1 200px;min-width:0;font-family:inherit;font-size:18px;font-weight:600;
+    padding:12px 14px;border-radius:14px;border:2px solid #d7deec;background:#f5f7fb;color:var(--ink);
+    outline:none;
+  }
+  .txtin:focus{border-color:var(--accent);background:#fff;}
+  .txtin.okin{border-color:var(--ok);background:#e7f8ee;}
+  .txtin.badin{border-color:var(--bad);background:#fdecec;}
+  .txtin:disabled{opacity:1;-webkit-text-fill-color:var(--ink);}
+  .hint{font-size:14px;color:var(--muted);margin-top:8px;}
+  .fb{border-radius:14px;padding:14px 16px;margin-top:14px;}
+  .fb.ok{background:#e7f8ee;border:2px solid var(--ok);}
+  .fb.no{background:#fdecec;border:2px solid var(--bad);}
+  .fb .head{font-weight:800;margin-bottom:4px;}
+  .fb.ok .head{color:var(--ok);}
+  .fb.no .head{color:var(--bad);}
+
+  /* ---- vysledky ---- */
+  .bigico{font-size:52px;line-height:1;margin-bottom:6px;}
+  .grade{
+    font-size:72px;font-weight:900;line-height:1;text-align:center;
+    background:linear-gradient(90deg,#15803d,#2563eb);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0;}
+  .stat{background:var(--soft);border-radius:14px;padding:10px 14px;text-align:center;min-width:92px;font-size:14px;}
+  .stat b{display:block;font-size:22px;}
+  .miss{border-left:5px solid var(--bad);background:#fff6f6;border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;}
+  .miss .lbl{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+  .trow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #edf0f6;}
+  .trow:first-of-type{border-top:none;}
+  .trow .tn{flex:1;min-width:0;line-height:1.3;}
+  .trow .ts{font-weight:800;white-space:nowrap;}
+  .trow .ts.full{color:var(--ok);}
+  .trow .ts.part{color:var(--bad);}
+  .cheat{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:baseline;}
+  .cheat .k{font-weight:800;color:var(--accent);}
+  .cheat.wide .k{white-space:nowrap;}
+
+  @media (hover:hover){
+    .btn:hover:enabled{filter:brightness(1.07);}
+    .opt:hover:enabled{border-color:var(--accent);}
+    .step:hover{border-color:var(--accent);}
+    .gb:hover:enabled{border-color:var(--accent);}
+  }
+  button:focus-visible, .logo:focus-visible{outline:3px solid #1b2333;outline-offset:2px;}
+  @media (min-width:560px){
+    .wrap{padding-top:22px;}
+    .card{padding:22px;}
+    .map{grid-auto-rows:54px;}
+    .tile{font-size:14px;}
+    .logo{font-size:26px;}
+    .topbar .pill{display:inline-block;}
+  }
+  @media (max-width:380px){
+    .cheat.wide{grid-template-columns:1fr;gap:0;}
+    .cheat.wide .k{margin-top:8px;}
+    .tile{font-size:11.5px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .btn, .bar span{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+/* ============================================================
+   UCEBNA APLIKACIA - DEJEPIS: 1. SVETOVA VOJNA
+   Obsah je zo skolskych poznamok. Bloky typu "extra" su
+   dovysvetlenie navyse, v zosite nie su.
+   ============================================================ */
+
+/* ===== FARBY TEM ===== */
+var PAL = [
+  {c:"#2563eb", s:"#e8f0ff"},
+  {c:"#15803d", s:"#e6f6ec"},
+  {c:"#c2410c", s:"#fff1e6"},
+  {c:"#7c3aed", s:"#f2ecff"},
+  {c:"#0e7490", s:"#e3f5f9"},
+  {c:"#be123c", s:"#ffe9ee"}
+];
+/* skuska z temy je zvladnuta od 80 % */
+var PASS = 0.8;
+
+/* ===== DATA: TEMY (vyklad + otazky) =====
+   Typy otazok:
+   mc    - vyber jednej moznosti, PRVA v poli "o" je spravna (pri zobrazeni sa zamiesaju)
+   tf    - pravda / nepravda
+   txt   - pisana odpoved, "acc" su uznane tvary
+   date  - pisany datum, "n" su ocakavane cisla [den, mesiac, rok] alebo [mesiac, rok] alebo [rok]
+   multi - oznac vsetky spravne ("ok" spravne, "no" nespravne)
+   group - roztried polozky do dvoch skupin ("a" patri do g[0], "b" do g[1])
+   order - zorad, pole "o" je v spravnom poradi */
+var LESSONS = [
+{
+  id:"sarajevo",
+  title:"Dva bloky a výstrely v Sarajeve",
+  short:"Trojspolok, Dohoda a atentát 28. 6. 1914",
+  intro:"Pred vojnou sa európske veľmoci rozdelili na dva tábory, ktoré si neverili. Stačila jedna iskra a tou bol atentát v Sarajeve.",
+  blocks:[
+    {t:"list", h:"Dva bloky proti sebe", li:[
+      "Vytvorením <b>Trojspolku</b> a <b>Dohody</b> sa veľmoci rozdelili na <b>dva bloky stojace proti sebe</b>.",
+      "Medzi jednotlivými blokmi panovala <b>nedôvera</b>."
+    ]},
+    {t:"two", k:"blocs",
+      a:{h:"Štáty Trojspolku", li:["Rakúsko-Uhorsko","Nemecko","Taliansko"]},
+      b:{h:"Štáty Dohody", li:["Rusko","Francúzsko","Veľká Británia"]}},
+    {t:"list", h:"Atentát v Sarajeve", li:[
+      "<b>28. 6. 1914</b> <b>Gavrilo Princip</b> zavraždil v <b>Sarajeve</b> <b>Františka Ferdinanda d'Este</b> z Rakúsko-Uhorska aj s manželkou."
+    ]},
+    {t:"extra", x:"V zošite je napísané „panovníka Rakúsko-Uhorska Ferdinanda d'Este“. Presne to bol <b>následník trónu</b>, teda ten, kto mal byť ďalším panovníkom. Panovníkom bol vtedy František Jozef I. (príde v ďalšej téme)."},
+    {t:"tip", x:"<b>Troj</b>spolok = tri štáty: Rakúsko-Uhorsko, Nemecko, Taliansko. Dohoda = tí, čo ich obkolesujú: Francúzsko a Veľká Británia zo západu, Rusko z východu. Skratka <b>R-U</b> znamená Rakúsko-Uhorsko."}
+  ],
+  must:[
+    "Trojspolok: Rakúsko-Uhorsko, Nemecko, Taliansko",
+    "Dohoda: Rusko, Francúzsko, Veľká Británia",
+    "28. 6. 1914 – Sarajevo – Gavrilo Princip – František Ferdinand d'Este"
+  ],
+  qs:[
+    {t:"group", q:"Zaraď štáty do blokov tak, ako boli rozdelené pred vojnou.", g:["Trojspolok","Dohoda"],
+     a:["Rakúsko-Uhorsko","Nemecko","Taliansko"], b:["Rusko","Francúzsko","Veľká Británia"],
+     e:"Trojspolok: Rakúsko-Uhorsko, Nemecko, Taliansko. Dohoda: Rusko, Francúzsko, Veľká Británia."},
+    {t:"date", q:"Kedy bol spáchaný atentát v Sarajeve? Napíš celý dátum.", n:[28,6,1914], sol:"28. 6. 1914",
+     e:"Atentát v Sarajeve bol 28. 6. 1914. Presne o mesiac neskôr sa začala vojna."},
+    {t:"txt", q:"Kto spáchal atentát v Sarajeve?", acc:["Gavrilo Princip","Princip","Gavrilo Princíp"], sol:"Gavrilo Princip",
+     e:"Atentát spáchal Gavrilo Princip."},
+    {t:"mc", q:"Koho zavraždil Gavrilo Princip v Sarajeve?",
+     o:["Františka Ferdinanda d'Este s manželkou","Františka Jozefa I.","nemeckého cisára Wilhelma II.","ruského cára Mikuláša II."],
+     e:"Obeťou atentátu bol František Ferdinand d'Este z Rakúsko-Uhorska a jeho manželka."},
+    {t:"mc", q:"V ktorom meste sa stal atentát, ktorý bol iskrou vojny?", o:["v Sarajeve","v Belehrade","vo Viedni","v Paríži"],
+     e:"Atentát sa stal v Sarajeve, preto „osudné výstrely zo Sarajeva“."},
+    {t:"tf", q:"Pred vojnou si oba bloky veľmocí navzájom dôverovali.", a:false,
+     e:"Naopak, medzi jednotlivými blokmi panovala nedôvera."},
+    {t:"multi", q:"Ktoré štáty tvorili Trojspolok?", ok:["Rakúsko-Uhorsko","Nemecko","Taliansko"], no:["Rusko","Francúzsko","Veľká Británia"],
+     e:"Trojspolok tvorili Rakúsko-Uhorsko, Nemecko a Taliansko. Ostatné tri štáty patrili do Dohody."},
+    {t:"txt", q:"Ako sa volal blok, do ktorého patrili Rusko, Francúzsko a Veľká Británia?", acc:["Dohoda","Trojdohoda","štáty Dohody"], sol:"Dohoda",
+     e:"Rusko, Francúzsko a Veľká Británia tvorili Dohodu."},
+    {t:"txt", q:"Ako sa volal blok, ktorý tvorili Rakúsko-Uhorsko, Nemecko a Taliansko?", acc:["Trojspolok","štáty Trojspolku"], sol:"Trojspolok",
+     e:"Rakúsko-Uhorsko, Nemecko a Taliansko tvorili Trojspolok."}
+  ]
+},
+{
+  id:"rozputanie",
+  title:"Rozpútanie vojny",
+  short:"Ultimátum Srbsku a 28. 7. 1914",
+  intro:"Atentát sa stal zámienkou. Do mesiaca z neho vyrástla vojna, do ktorej sa zapojili oba bloky.",
+  blocks:[
+    {t:"list", h:"Od atentátu k vojne", li:[
+      "Nemecký cisár <b>Wilhelm II.</b> využil atentát na rozpútanie vojny.",
+      "Podnecoval svojho spojenca, panovníka Rakúsko-Uhorska <b>Františka Jozefa I.</b>, aby dal Srbsku <b>ultimátum</b>.",
+      "Srbsko sa malo <b>vzdať štátnej samostatnosti</b>.",
+      "Srbsko <b>odmietlo splniť všetky požiadavky</b>, tak mu Rakúsko-Uhorsko <b>28. 7. 1914</b> vypovedalo vojnu = <b>začiatok 1. svetovej vojny</b>."
+    ]},
+    {t:"def", n:"Ultimátum", x:"výstražný návrh sprevádzaný konkrétnou hrozbou"},
+    {t:"list", h:"Kto komu pomohol", li:[
+      "Na pomoc <b>Srbsku</b> prišlo <b>Rusko, Francúzsko, Veľká Británia</b> a iné štáty.",
+      "<b>Rakúsko-Uhorsku</b> pomohlo <b>Nemecko</b> = <b>Centrálne mocnosti</b> (boli v strede Európy)."
+    ]},
+    {t:"two", k:"blocs", h:"Bloky počas vojny",
+      a:{h:"Trojspolok → Centrálne mocnosti", li:["Nemecko","Rakúsko-Uhorsko","+ Osmanská ríša","+ Bulharsko"]},
+      b:{h:"Dohoda", li:["Veľká Británia","Francúzsko","Rusko","+ Taliansko","+ Srbsko"]}},
+    {t:"map", m:"1914"},
+    {t:"extra", x:"Taliansko bolo pred vojnou v Trojspolku, ale počas vojny prešlo na stranu Dohody. Preto ho máš na mape aj v zozname pri Dohode."},
+    {t:"tip", x:"Atentát <b>28. 6.</b>, vojna <b>28. 7.</b> Dvakrát dvadsiateho ôsmeho, presne mesiac po sebe."}
+  ],
+  must:[
+    "Wilhelm II. (Nemecko) a František Jozef I. (Rakúsko-Uhorsko)",
+    "Ultimátum = výstražný návrh sprevádzaný konkrétnou hrozbou",
+    "28. 7. 1914 – Rakúsko-Uhorsko vypovedalo vojnu Srbsku = začiatok vojny",
+    "Centrálne mocnosti: Nemecko, Rakúsko-Uhorsko, Osmanská ríša, Bulharsko"
+  ],
+  qs:[
+    {t:"date", q:"Kedy Rakúsko-Uhorsko vypovedalo vojnu Srbsku, čím sa začala 1. svetová vojna? Napíš celý dátum.", n:[28,7,1914], sol:"28. 7. 1914",
+     e:"Rakúsko-Uhorsko vypovedalo Srbsku vojnu 28. 7. 1914. To je začiatok 1. svetovej vojny."},
+    {t:"mc", q:"Ktorý nemecký cisár využil atentát na rozpútanie vojny?", o:["Wilhelm II.","František Jozef I.","Mikuláš II.","František Ferdinand d'Este"],
+     e:"Nemeckým cisárom bol Wilhelm II. František Jozef I. vládol v Rakúsko-Uhorsku, Mikuláš II. v Rusku."},
+    {t:"mc", q:"Ako sa volal panovník Rakúsko-Uhorska, ktorý dal Srbsku ultimátum?", o:["František Jozef I.","Wilhelm II.","František Ferdinand d'Este","Mikuláš II."],
+     e:"Panovníkom Rakúsko-Uhorska bol František Jozef I. Wilhelm II. ho na ultimátum podnecoval."},
+    {t:"txt", q:"Ako sa jedným slovom nazýva výstražný návrh sprevádzaný konkrétnou hrozbou?", acc:["ultimátum"], sol:"ultimátum",
+     e:"Ultimátum = výstražný návrh sprevádzaný konkrétnou hrozbou."},
+    {t:"mc", q:"Čoho sa malo Srbsko podľa ultimáta vzdať?", o:["štátnej samostatnosti","svojich kolónií","Alsaska a Lotrinska","spojenectva s Nemeckom"],
+     e:"Srbsko sa malo vzdať štátnej samostatnosti."},
+    {t:"mc", q:"Ako sa počas vojny nazývali Nemecko a Rakúsko-Uhorsko so svojimi spojencami?", o:["Centrálne mocnosti","Dohoda","Rada piatich","Spoločnosť národov"],
+     e:"Nemecko, Rakúsko-Uhorsko a ich spojenci boli Centrálne mocnosti."},
+    {t:"mc", q:"Prečo sa im hovorilo Centrálne mocnosti?", o:["lebo ležali v strede Európy","lebo mali najväčšie armády na svete","lebo vojnu riadili z jedného mesta","lebo ovládali stred Atlantického oceánu"],
+     e:"Centrálne mocnosti boli v strede Európy."},
+    {t:"group", q:"Na ktorej strane bojovali tieto štáty počas vojny?", g:["Centrálne mocnosti","Dohoda"],
+     a:["Nemecko","Rakúsko-Uhorsko","Osmanská ríša","Bulharsko"], b:["Veľká Británia","Francúzsko","Rusko","Srbsko","Taliansko"],
+     e:"Centrálne mocnosti: Nemecko, Rakúsko-Uhorsko, Osmanská ríša, Bulharsko. Dohoda: Veľká Británia, Francúzsko, Rusko, Srbsko a počas vojny aj Taliansko."},
+    {t:"tf", q:"Srbsko splnilo všetky požiadavky ultimáta.", a:false,
+     e:"Srbsko odmietlo splniť všetky požiadavky, preto mu Rakúsko-Uhorsko vypovedalo vojnu."},
+    {t:"mc", q:"Ktorému štátu dalo Rakúsko-Uhorsko ultimátum?", o:["Srbsku","Rusku","Francúzsku","Belgicku"],
+     e:"Ultimátum dostalo Srbsko."},
+    {t:"order", q:"Zoraď udalosti tak, ako išli za sebou.",
+     o:["atentát v Sarajeve","Rakúsko-Uhorsko dáva Srbsku ultimátum","Srbsko odmieta splniť všetky požiadavky","Rakúsko-Uhorsko vypovedá Srbsku vojnu"],
+     e:"Atentát (28. 6. 1914) → ultimátum → Srbsko nesplní všetky požiadavky → vyhlásenie vojny (28. 7. 1914)."},
+    {t:"multi", q:"Ktoré veľmoci prišli na pomoc Srbsku?", ok:["Rusko","Francúzsko","Veľká Británia"], no:["Nemecko","Bulharsko","Osmanská ríša"],
+     e:"Na pomoc Srbsku prišlo Rusko, Francúzsko, Veľká Británia a iné štáty."},
+    {t:"mc", q:"Kto pomohol Rakúsko-Uhorsku?", o:["Nemecko","Rusko","Francúzsko","Veľká Británia"],
+     e:"Rakúsko-Uhorsku pomohlo Nemecko. Spolu sa nazývali Centrálne mocnosti."}
+  ]
+},
+{
+  id:"priciny",
+  title:"Príčiny vojny a kde sa bojovalo",
+  short:"Päť príčin, bojiská a dva fronty",
+  intro:"Atentát bol len iskra. Vojna mala hlbšie príčiny a čoskoro sa rozšírila ďaleko za hranice Európy.",
+  blocks:[
+    {t:"list", h:"Príčiny 1. svetovej vojny", li:[
+      "<b>boj o kolónie</b>",
+      "<b>súperenie veľmocí o prvenstvo vo svete</b>",
+      "snaha <b>podmaniť si Balkán</b>",
+      "<b>preteky v zbrojení</b>",
+      "boj <b>Francúzska a Nemecka o Alsasko a Lotrinsko</b>"
+    ]},
+    {t:"tip", x:"Päť príčin si zapamätáš cez začiatočné písmená <b>K – P – B – Z – A</b>: <b>k</b>olónie, <b>p</b>rvenstvo vo svete, <b>B</b>alkán, <b>z</b>brojenie, <b>A</b>lsasko a Lotrinsko."},
+    {t:"list", h:"Kde sa bojovalo", li:[
+      "Okrem Európy aj v <b>Afrike</b> a <b>Ázii</b> – na <b>Blízkom a Ďalekom východe</b> – a v <b>Atlantickom oceáne</b>.",
+      "V Európe boli <b>dva fronty</b>: <b>východný</b> a <b>západný</b>."
+    ]},
+    {t:"extra", x:"Front je pásmo, kde proti sebe stoja a bojujú armády. Kolónia je územie v zámorí, ktoré ovláda cudzia veľmoc."}
+  ],
+  must:[
+    "5 príčin: kolónie, prvenstvo vo svete, Balkán, zbrojenie, Alsasko a Lotrinsko",
+    "Bojovalo sa aj v Afrike, Ázii a v Atlantickom oceáne",
+    "V Európe dva fronty: východný a západný"
+  ],
+  qs:[
+    {t:"multi", q:"Označ všetky príčiny 1. svetovej vojny.",
+     ok:["boj o kolónie","súperenie veľmocí o prvenstvo vo svete","snaha podmaniť si Balkán","preteky v zbrojení","spor Francúzska a Nemecka o Alsasko a Lotrinsko"],
+     no:["vznik Spoločnosti národov","Októbrová revolúcia v Rusku"],
+     e:"Príčin je päť: kolónie, prvenstvo vo svete, Balkán, zbrojenie a Alsasko s Lotrinskom. Spoločnosť národov aj Októbrová revolúcia prišli až neskôr."},
+    {t:"mc", q:"O ktoré územie bojovali Francúzsko a Nemecko?", o:["o Alsasko a Lotrinsko","o Bosnu a Hercegovinu","o Karpaty","o Balkán"],
+     e:"Francúzsko a Nemecko sa sporili o Alsasko a Lotrinsko."},
+    {t:"mc", q:"Ktoré dva štáty sa sporili o Alsasko a Lotrinsko?", o:["Francúzsko a Nemecko","Rusko a Rakúsko-Uhorsko","Veľká Británia a Nemecko","Taliansko a Francúzsko"],
+     e:"O Alsasko a Lotrinsko bojovali Francúzsko a Nemecko."},
+    {t:"mc", q:"Ktoré dva fronty boli v Európe?", o:["východný a západný","severný a južný","ruský a taliansky","atlantický a balkánsky"],
+     e:"V Európe boli dva fronty: východný a západný."},
+    {t:"tf", q:"V 1. svetovej vojne sa bojovalo iba v Európe.", a:false,
+     e:"Bojovalo sa aj v Afrike, Ázii (na Blízkom a Ďalekom východe) a v Atlantickom oceáne."},
+    {t:"multi", q:"Kde všade sa bojovalo okrem Európy?", ok:["v Afrike","v Ázii (Blízky a Ďaleký východ)","v Atlantickom oceáne"], no:["v Austrálii","v Antarktíde"],
+     e:"Okrem Európy sa bojovalo v Afrike, Ázii a v Atlantickom oceáne."},
+    {t:"txt", q:"Ktorý polostrov si chceli veľmoci podmaniť? (jedna z príčin vojny)", acc:["Balkán","Balkánsky polostrov","na Balkáne"], sol:"Balkán",
+     e:"Jednou z príčin bola snaha podmaniť si Balkán."},
+    {t:"mc", q:"Čo znamenajú „preteky v zbrojení“?",
+     o:["štáty sa predbiehali, kto bude mať viac zbraní a silnejšiu armádu","štáty súťažili v športových hrách vojakov","štáty si spoločne ničili zbrane","štáty prestali vyrábať zbrane"],
+     e:"Preteky v zbrojení = veľmoci sa predbiehali vo výrobe zbraní a v sile armády."},
+    {t:"txt", q:"Doplň príčinu vojny: boj o ______ (zámorské územia, ktoré veľmoci ovládali).", acc:["kolónie","o kolónie","kolónia"], sol:"kolónie",
+     e:"Prvá príčina v poznámkach je boj o kolónie."},
+    {t:"mc", q:"O čo medzi sebou súperili veľmoci?", o:["o prvenstvo vo svete","o priateľstvo so Srbskom","o to, kto skôr zruší armádu","o sídlo Spoločnosti národov"],
+     e:"Veľmoci súperili o prvenstvo vo svete."}
+  ]
+},
+{
+  id:"zapad",
+  title:"Západný front",
+  short:"Belgicko, zákopová vojna, Marna, Somma, Verdun, Ypres",
+  intro:"Nemci chceli vojnu na západe vyhrať rýchlo. Namiesto toho sa front zasekol na celé roky.",
+  blocks:[
+    {t:"list", h:"Nemecký plán", li:[
+      "<b>Nemecko</b> vyhlásilo vojnu <b>Rusku</b> a <b>Francúzsku</b>.",
+      "<b>Bleskovým útokom</b> na Francúzsko cez <b>neutrálne Belgicko</b> chceli Nemci rozhodnúť vojnu.",
+      "Belgicko chránila <b>Veľká Británia</b>.",
+      "<b>Francúzska armáda</b> zastavila nemecký postup a začala sa zdĺhavá a ťažká vojna – <b>zákopová</b>."
+    ]},
+    {t:"dates", h:"Tri veľké bitky", rows:[
+      ["1914","pri rieke <b>Marne</b>"],
+      ["1916","pri rieke <b>Somme</b>"],
+      ["1916","pri meste <b>Verdun</b>"]
+    ]},
+    {t:"list", h:"Chemické zbrane", li:[
+      "<b>1915</b> a <b>1917</b> pri meste <b>Ypres</b> – prvýkrát použité <b>chemické zbrane</b> (<b>chlór, yperit</b>).",
+      "<b>Nikto nezvíťazil.</b>"
+    ]},
+    {t:"tip", x:"<b>Yperit</b> sa volá podľa mesta <b>Ypres</b>. A pozor na detail: Marna a Somma sú <b>rieky</b>, Verdun a Ypres sú <b>mestá</b>."},
+    {t:"extra", x:"Zákopová vojna: vojaci sa zakopali do zákopov oproti sebe a front sa mesiace takmer nepohol. Neutrálny štát je taký, ktorý sa do vojny nezapája."}
+  ],
+  must:[
+    "Útok na Francúzsko cez neutrálne Belgicko, ktoré chránila Veľká Británia",
+    "Zákopová vojna",
+    "Marna 1914, Somma 1916, Verdun 1916",
+    "Ypres 1915 a 1917 – chemické zbrane (chlór, yperit)",
+    "Nikto nezvíťazil"
+  ],
+  qs:[
+    {t:"multi", q:"Ktorým štátom vyhlásilo Nemecko vojnu?", ok:["Rusku","Francúzsku"], no:["Taliansku","Rakúsko-Uhorsku","Bulharsku"],
+     e:"Nemecko vyhlásilo vojnu Rusku a Francúzsku."},
+    {t:"mc", q:"Cez ktorý neutrálny štát zaútočili Nemci na Francúzsko?", o:["cez Belgicko","cez Švajčiarsko","cez Taliansko","cez Srbsko"],
+     e:"Nemci útočili na Francúzsko cez neutrálne Belgicko."},
+    {t:"mc", q:"Ktorá veľmoc chránila neutrálne Belgicko?", o:["Veľká Británia","Rusko","Rakúsko-Uhorsko","Osmanská ríša"],
+     e:"Belgicko chránila Veľká Británia."},
+    {t:"txt", q:"Aká vojna sa začala po zastavení nemeckého postupu? Zdĺhavá a ťažká vojna – ______.", acc:["zákopová","zákopová vojna","zákopova"], sol:"zákopová",
+     e:"Po zastavení nemeckého postupu sa začala zdĺhavá a ťažká zákopová vojna."},
+    {t:"mc", q:"V ktorom roku bola bitka pri rieke Marne?", o:["1914","1915","1916","1917"],
+     e:"Bitka pri rieke Marne bola v roku 1914, hneď na začiatku vojny."},
+    {t:"date", q:"V ktorom roku boli bitky pri rieke Somme a pri meste Verdun?", n:[1916], sol:"1916",
+     e:"Bitky pri Somme aj pri Verdune boli v roku 1916."},
+    {t:"multi", q:"Označ tri veľké bitky západného frontu.", ok:["pri rieke Marne","pri rieke Somme","pri meste Verdun"], no:["pri meste Sarajevo","pri meste Brest-Litovsk","v Karpatoch"],
+     e:"Tri veľké bitky: Marna (1914), Somma (1916), Verdun (1916)."},
+    {t:"txt", q:"Pri ktorom meste boli prvýkrát použité chemické zbrane?", acc:["Ypres","Ypry","Ieper","Yper","Ypre","Ipres","pri Ypres","pri meste Ypres"], sol:"Ypres",
+     e:"Chemické zbrane boli prvýkrát použité pri meste Ypres. Podľa neho sa volá yperit."},
+    {t:"mc", q:"Ktoré chemické zbrane boli použité pri Ypres?", o:["chlór a yperit","dynamit a pušný prach","hélium a neón","benzín a nafta"],
+     e:"Pri Ypres boli použité plyny chlór a yperit."},
+    {t:"tf", q:"Na západnom fronte Nemecko rýchlo zvíťazilo.", a:false,
+     e:"Bleskový útok sa nepodaril, začala sa zákopová vojna a nikto nezvíťazil."},
+    {t:"mc", q:"Ktorá armáda zastavila nemecký postup?", o:["francúzska","ruská","talianska","srbská"],
+     e:"Nemecký postup zastavila francúzska armáda."},
+    {t:"mc", q:"V ktorých rokoch boli pri Ypres použité chemické zbrane?", o:["1915 a 1917","1914 a 1916","1916 a 1918","1914 a 1918"],
+     e:"Pri Ypres to bolo v rokoch 1915 a 1917."},
+    {t:"mc", q:"Ako chceli Nemci rozhodnúť vojnu na západe?",
+     o:["bleskovým útokom na Francúzsko cez neutrálne Belgicko","dlhým obliehaním Londýna","útokom cez Karpaty","mierovou dohodou s Francúzskom"],
+     e:"Nemci chceli vojnu rozhodnúť bleskovým útokom na Francúzsko cez neutrálne Belgicko."}
+  ]
+},
+{
+  id:"vychod",
+  title:"Východný front",
+  short:"Rusi, Karpaty, ústup 1915 a Brusilov 1916",
+  intro:"Na východe stálo Rusko proti Rakúsko-Uhorsku a Nemecku. Boje sa dostali až na územie Slovenska.",
+  blocks:[
+    {t:"list", h:"Ako sa bojovalo na východe", li:[
+      "<b>Rusi prešli hneď do útoku</b>, úspešní boli proti <b>Rakúsko-Uhorsku</b>.",
+      "Podarilo sa im <b>prekročiť Karpaty</b> a dostať sa na <b>Slovensko</b>.",
+      "<b>V máji 1915</b> – dlhý <b>ústup pod nemeckým tlakom</b>, hrozila im porážka.",
+      "<b>V lete 1916</b> – prechodný úspech pod vedením <b>Brusilova</b>."
+    ]},
+    {t:"extra", x:"Slovensko vtedy patrilo do Rakúsko-Uhorska, preto sa boje dostali aj k nám. Brusilov bol ruský generál."},
+    {t:"tip", x:"Východný front ide ako hojdačka: <b>útok</b> (Karpaty) → <b>ústup</b> (máj 1915) → <b>úspech</b> (leto 1916, Brusilov)."}
+  ],
+  must:[
+    "Rusi hneď zaútočili a boli úspešní proti Rakúsko-Uhorsku",
+    "Prekročili Karpaty a dostali sa na Slovensko",
+    "Máj 1915 – dlhý ústup pod nemeckým tlakom",
+    "Leto 1916 – prechodný úspech, Brusilov"
+  ],
+  qs:[
+    {t:"mc", q:"Proti komu boli Rusi na začiatku vojny úspešní?", o:["proti Rakúsko-Uhorsku","proti Nemecku","proti Osmanskej ríši","proti Bulharsku"],
+     e:"Rusi prešli hneď do útoku a úspešní boli proti Rakúsko-Uhorsku."},
+    {t:"mc", q:"Ktoré pohorie sa Rusom podarilo prekročiť?", o:["Karpaty","Alpy","Pyreneje","Ural"],
+     e:"Rusom sa podarilo prekročiť Karpaty."},
+    {t:"mc", q:"Kam sa Rusi dostali po prekročení Karpát?", o:["na Slovensko","do Francúzska","do Talianska","do Belgicka"],
+     e:"Po prekročení Karpát sa Rusi dostali na Slovensko."},
+    {t:"mc", q:"Čo sa stalo na východnom fronte v máji 1915?",
+     o:["Rusi začali dlhý ústup pod nemeckým tlakom","Rusi prekročili Karpaty","Rusi mali úspech pod vedením Brusilova","Rusko uzavrelo mier"],
+     e:"V máji 1915 sa začal dlhý ústup Rusov pod nemeckým tlakom, hrozila im porážka."},
+    {t:"txt", q:"Pod vedením ktorého generála mali Rusi v lete 1916 prechodný úspech?", acc:["Brusilov","Brusilova","generál Brusilov","generála Brusilova","Alexej Brusilov","Brusilovov"], sol:"Brusilov",
+     e:"V lete 1916 mali Rusi prechodný úspech pod vedením Brusilova."},
+    {t:"mc", q:"Kedy mali Rusi prechodný úspech pod vedením Brusilova?", o:["v lete 1916","v máji 1915","v marci 1917","v novembri 1917"],
+     e:"Prechodný úspech pod vedením Brusilova prišiel v lete 1916."},
+    {t:"tf", q:"Rusi na začiatku vojny čakali v obrane a neútočili.", a:false,
+     e:"Rusi prešli hneď do útoku."},
+    {t:"order", q:"Zoraď udalosti východného frontu od najstaršej.",
+     o:["Rusi prechádzajú do útoku proti Rakúsko-Uhorsku","Rusi prekračujú Karpaty a dostávajú sa na Slovensko","dlhý ústup Rusov pod nemeckým tlakom","prechodný úspech pod vedením Brusilova"],
+     e:"Útok → Karpaty a Slovensko → ústup (máj 1915) → Brusilov (leto 1916)."},
+    {t:"mc", q:"Pod tlakom ktorej armády Rusi v roku 1915 ustupovali?", o:["nemeckej","bulharskej","osmanskej","talianskej"],
+     e:"Rusi ustupovali pod nemeckým tlakom."}
+  ]
+},
+{
+  id:"rusko",
+  title:"Revolučné zmeny v Rusku",
+  short:"Februárová a Októbrová revolúcia, Brest-Litovský mier",
+  intro:"Porážky a bieda doma vyhnali Rusov do ulíc. V priebehu jedného roka prišli dve revolúcie a Rusko z vojny vystúpilo.",
+  blocks:[
+    {t:"list", h:"Prečo prišla revolúcia", li:[
+      "<b>Porážky na fronte</b> doľahli na obyvateľov: <b>vojaci nechceli bojovať, robotníci štrajkovali, ženy demonštrovali</b> v uliciach."
+    ]},
+    {t:"dates", h:"Tri kroky", rows:[
+      ["marec 1917","<b>Februárová revolúcia</b> – prinútili cára <b>Mikuláša II.</b> odstúpiť"],
+      ["november 1917","<b>Októbrová revolúcia</b> – strana ruských <b>boľševikov</b> pod vedením <b>Lenina</b> sa dostala k moci"],
+      ["marec 1918","boľševické Rusko uzavrelo <b>Brest-Litovský mier</b> s Centrálnymi mocnosťami"]
+    ]},
+    {t:"tip", x:"Chyták: <b>Februárová</b> revolúcia bola v <b>marci</b> a <b>Októbrová</b> v <b>novembri</b>. Vždy o mesiac neskôr, než hovorí názov."},
+    {t:"extra", x:"Rusko vtedy používalo starý kalendár, ktorý oproti nášmu meškal, preto názvy revolúcií nesedia s mesiacmi. Brest-Litovským mierom Rusko z vojny vystúpilo."}
+  ],
+  must:[
+    "Marec 1917 – Februárová revolúcia – cár Mikuláš II. odstúpil",
+    "November 1917 – Októbrová revolúcia – boľševici a Lenin",
+    "Marec 1918 – Brest-Litovský mier s Centrálnymi mocnosťami"
+  ],
+  qs:[
+    {t:"mc", q:"V ktorom mesiaci (podľa nášho kalendára) prebehla Februárová revolúcia?", o:["v marci 1917","vo februári 1917","v októbri 1917","v novembri 1917"],
+     e:"Februárová revolúcia bola v marci 1917."},
+    {t:"mc", q:"V ktorom mesiaci (podľa nášho kalendára) prebehla Októbrová revolúcia?", o:["v novembri 1917","v októbri 1917","v marci 1917","v marci 1918"],
+     e:"Októbrová revolúcia bola v novembri 1917."},
+    {t:"txt", q:"Ktorého cára prinútila Februárová revolúcia odstúpiť?",
+     acc:["Mikuláš II.","Mikuláša II.","Mikuláš 2","Mikuláša 2","Mikuláš druhý","Mikuláša druhého","cár Mikuláš II.","cára Mikuláša II.","Mikuláš","Mikuláša"], sol:"Mikuláš II.",
+     e:"Februárová revolúcia prinútila odstúpiť cára Mikuláša II."},
+    {t:"txt", q:"Kto viedol boľševikov, ktorí sa v Októbrovej revolúcii dostali k moci?", acc:["Lenin","Lenina","Vladimír Iľjič Lenin","V. I. Lenin","Vladimír Lenin"], sol:"Lenin",
+     e:"Boľševikov viedol Lenin."},
+    {t:"txt", q:"Ako sa volá mier, ktorý boľševické Rusko uzavrelo s Centrálnymi mocnosťami?", acc:["Brest-Litovský mier","Brest-Litovský","Brestlitovský mier","Brestlitovský","Brest Litovsk","Brest-Litovsk"], sol:"Brest-Litovský mier",
+     e:"Bol to Brest-Litovský mier."},
+    {t:"date", q:"Kedy bol uzavretý Brest-Litovský mier? Napíš mesiac a rok.", n:[3,1918], sol:"marec 1918",
+     e:"Brest-Litovský mier bol uzavretý v marci 1918."},
+    {t:"multi", q:"Ako sa prejavila nespokojnosť obyvateľov Ruska?", ok:["vojaci nechceli bojovať","robotníci štrajkovali","ženy demonštrovali v uliciach"], no:["cár vyhlásil vojnu USA","Rusi obsadili Berlín"],
+     e:"Vojaci nechceli bojovať, robotníci štrajkovali a ženy demonštrovali v uliciach."},
+    {t:"mc", q:"S kým uzavrelo boľševické Rusko Brest-Litovský mier?", o:["s Centrálnymi mocnosťami","s Dohodou","s USA","so Srbskom"],
+     e:"Brest-Litovský mier uzavrelo Rusko s Centrálnymi mocnosťami."},
+    {t:"order", q:"Zoraď udalosti v Rusku od najstaršej.",
+     o:["porážky na fronte a nespokojnosť ľudí","Februárová revolúcia – cár odstupuje","Októbrová revolúcia – boľševici pri moci","Brest-Litovský mier"],
+     e:"Nespokojnosť → Februárová revolúcia (marec 1917) → Októbrová revolúcia (november 1917) → Brest-Litovský mier (marec 1918)."},
+    {t:"mc", q:"Ktorá strana sa v Októbrovej revolúcii dostala k moci?", o:["boľševici","cárovi generáli","nemeckí vojaci","srbskí atentátnici"],
+     e:"K moci sa dostala strana ruských boľševikov pod vedením Lenina."}
+  ]
+},
+{
+  id:"koniec",
+  title:"Koniec vojny",
+  short:"Vstup USA, Zimmermannov telegram, prímerie 11. 11. 1918",
+  intro:"Rusko odišlo, ale Dohoda dostala nového silného spojenca. Nemecku sa postupne rozpadli spojenci aj vlastný štát.",
+  blocks:[
+    {t:"list", h:"Ako sa vojna skončila", li:[
+      "<b>Vystúpenie Ruska</b> Dohodu oslabilo (<b>Brest-Litovský mier</b>), ale <b>v apríli 1917</b> vstúpili do vojny <b>USA</b>.",
+      "<b>Zimmermannov telegram</b>",
+      "postupný <b>rozpad nemeckých spojencov</b>",
+      "<b>revolúcia v Nemecku</b>",
+      "Nemecko podpísalo <b>prímerie</b> – <b>11. 11. 1918</b>"
+    ]},
+    {t:"extra", h:"Prečo bol vstup USA taký dôležitý pre mocnosti Dohody?", x:"V zošite je to zapísané ako otázka. Odpoveď: USA nahradili Rusko, ktoré z vojny vystúpilo. Priniesli nových vojakov, zbrane, zásoby a peniaze, takže vyčerpaná Dohoda získala prevahu."},
+    {t:"extra", h:"Čo bol Zimmermannov telegram?", x:"V zošite je len heslo. Bol to tajný telegram nemeckého ministra Zimmermanna, v ktorom Nemecko ponúkalo Mexiku spojenectvo proti USA. Briti ho zachytili, USA to pobúrilo a vstúpili do vojny. Ak ste si to v škole povedali inak, drž sa školy."},
+    {t:"tip", x:"Koniec vojny: <b>11. 11.</b> 1918. Samé jedenástky."}
+  ],
+  must:[
+    "Apríl 1917 – vstup USA do vojny (na strane Dohody)",
+    "Zimmermannov telegram",
+    "Rozpad nemeckých spojencov, revolúcia v Nemecku",
+    "11. 11. 1918 – Nemecko podpísalo prímerie"
+  ],
+  qs:[
+    {t:"date", q:"Kedy Nemecko podpísalo prímerie, ktorým sa vojna skončila? Napíš celý dátum.", n:[11,11,1918], sol:"11. 11. 1918",
+     e:"Nemecko podpísalo prímerie 11. 11. 1918."},
+    {t:"mc", q:"Kedy vstúpili do vojny USA?", o:["v apríli 1917","v marci 1918","v novembri 1917","v lete 1916"],
+     e:"USA vstúpili do vojny v apríli 1917."},
+    {t:"mc", q:"Na ktorej strane vstúpili USA do vojny?", o:["na strane Dohody","na strane Centrálnych mocností","zostali neutrálne","na strane Ruska proti Dohode"],
+     e:"USA vstúpili do vojny na strane Dohody."},
+    {t:"mc", q:"Čo Dohodu oslabilo?", o:["vystúpenie Ruska z vojny","vstup USA do vojny","revolúcia v Nemecku","bitka pri Marne"],
+     e:"Dohodu oslabilo vystúpenie Ruska z vojny (Brest-Litovský mier)."},
+    {t:"txt", q:"Ako sa volá telegram, ktorý súvisí so vstupom USA do vojny? (______ telegram)",
+     acc:["Zimmermannov telegram","Zimmermannov","Zimmermanov telegram","Zimmermanov","Zimermanov telegram","Zimermanov","Zimermannov telegram","Zimermannov","Zimmermann","Zimmerman"], sol:"Zimmermannov telegram",
+     e:"Je to Zimmermannov telegram."},
+    {t:"mc", q:"Prečo bol vstup USA do vojny taký dôležitý pre Dohodu?",
+     o:["USA nahradili Rusko a priniesli nových vojakov, zbrane a zásoby","USA presvedčili Nemecko, aby sa pridalo k Dohode","USA zakázali používať chemické zbrane","USA obsadili Rakúsko-Uhorsko"],
+     e:"USA nahradili Rusko, ktoré z vojny vystúpilo, a priniesli nových vojakov, zbrane, zásoby a peniaze."},
+    {t:"order", q:"Zoraď udalosti konca vojny od najstaršej.",
+     o:["vstup USA do vojny","Brest-Litovský mier – Rusko vystupuje z vojny","rozpad nemeckých spojencov a revolúcia v Nemecku","Nemecko podpisuje prímerie"],
+     e:"Vstup USA (apríl 1917) → Brest-Litovský mier (marec 1918) → rozpad spojencov a revolúcia v Nemecku → prímerie (11. 11. 1918)."},
+    {t:"tf", q:"Prímerie, ktorým sa vojna skončila, podpísalo Rusko.", a:false,
+     e:"Prímerie 11. 11. 1918 podpísalo Nemecko. Rusko z vojny vystúpilo už skôr Brest-Litovským mierom."},
+    {t:"mc", q:"Čo sa na konci vojny stalo s nemeckými spojencami?", o:["postupne sa rozpadli","porazili Dohodu","pridali sa k USA","obsadili Francúzsko"],
+     e:"Na konci vojny prišiel postupný rozpad nemeckých spojencov."},
+    {t:"mc", q:"Čo vypuklo v Nemecku na konci vojny?", o:["revolúcia","morová epidémia","občianska vojna s Francúzskom","nič, všetko bolo pokojné"],
+     e:"V Nemecku vypukla revolúcia a potom Nemecko podpísalo prímerie."}
+  ]
+},
+{
+  id:"dosledky",
+  title:"Dôsledky vojny",
+  short:"Straty na životoch a ďalšie dôsledky",
+  intro:"Vojna zmenila mapu Európy a zanechala milióny obetí, zničené mestá a dlhy.",
+  blocks:[
+    {t:"list", h:"Hlavný dôsledok", li:["<b>Zmena mapy Európy</b>"]},
+    {t:"dates", h:"Straty na životoch", rows:[
+      ["8,5 milióna","<b>vojenských obetí</b>"],
+      ["13 miliónov","<b>civilných obetí</b>"],
+      ["21,2 milióna","zranených"]
+    ]},
+    {t:"extra", x:"Pri čísle 21,2 milióna je v zošite napísané „obetí“. Toto číslo sa bežne uvádza ako počet zranených. Skontroluj si to v zošite alebo sa opýtaj, aby si na písomke napísal to, čo chce učiteľ."},
+    {t:"list", h:"Ďalšie dôsledky", li:[
+      "<b>materiálne škody</b>",
+      "<b>zadlženie európskych štátov</b>",
+      "<b>hospodárske problémy</b>",
+      "<b>zničené mestá a infraštruktúra</b>",
+      "<b>nové zbrane</b>"
+    ]},
+    {t:"tip", x:"Civilných obetí bolo viac ako vojenských: <b>13</b> miliónov oproti <b>8,5</b> milióna."}
+  ],
+  must:[
+    "Zmena mapy Európy",
+    "8,5 milióna vojenských obetí, 13 miliónov civilných obetí",
+    "Materiálne škody, zadlženie, hospodárske problémy, zničené mestá a infraštruktúra, nové zbrane"
+  ],
+  qs:[
+    {t:"mc", q:"Koľko bolo vojenských obetí 1. svetovej vojny?", o:["8,5 milióna","13 miliónov","850-tisíc","50 miliónov"],
+     e:"Vojenských obetí bolo 8,5 milióna."},
+    {t:"mc", q:"Koľko bolo civilných obetí 1. svetovej vojny?", o:["13 miliónov","8,5 milióna","1,3 milióna","30 miliónov"],
+     e:"Civilných obetí bolo 13 miliónov."},
+    {t:"multi", q:"Označ všetky dôsledky vojny.",
+     ok:["materiálne škody","zadlženie európskych štátov","hospodárske problémy","zničené mestá a infraštruktúra","nové zbrane","zmena mapy Európy"],
+     no:["rýchle zbohatnutie Európy","vznik Trojspolku"],
+     e:"Dôsledky: zmena mapy Európy, straty na životoch, materiálne škody, zadlženie, hospodárske problémy, zničené mestá a infraštruktúra, nové zbrane. Trojspolok vznikol už pred vojnou."},
+    {t:"tf", q:"Po vojne zostala mapa Európy rovnaká ako pred ňou.", a:false,
+     e:"Dôsledkom vojny bola zmena mapy Európy."},
+    {t:"mc", q:"Čo sa po vojne stalo s európskymi štátmi po finančnej stránke?", o:["zadlžili sa","zbohatli","nič sa nezmenilo","prestali používať peniaze"],
+     e:"Dôsledkom vojny bolo zadlženie európskych štátov."},
+    {t:"mc", q:"Ktorých obetí bolo viac?", o:["civilných","vojenských","bolo ich presne rovnako"],
+     e:"Civilných obetí bolo 13 miliónov, vojenských 8,5 milióna."},
+    {t:"tf", q:"Vojna priniesla aj nové zbrane.", a:true,
+     e:"Nové zbrane patria medzi dôsledky vojny."},
+    {t:"txt", q:"Doplň dôsledok vojny: zničené mestá a ______ (cesty, železnice, mosty).", acc:["infraštruktúra","infraštruktúru","infraštruktúry"], sol:"infraštruktúra",
+     e:"Dôsledkom boli zničené mestá a infraštruktúra."},
+    {t:"mc", q:"Čo z toho NEBOL dôsledok vojny?", o:["rozkvet a bohatnutie európskych miest","materiálne škody","hospodárske problémy","zmena mapy Európy"],
+     e:"Mestá boli zničené, nie bohatšie. Ostatné tri možnosti sú skutočné dôsledky vojny."}
+  ]
+},
+{
+  id:"pariz",
+  title:"Parížska mierová konferencia",
+  short:"18. 1. 1919, Rada piatich, mierové zmluvy",
+  intro:"Po vojne sa víťazi zišli v Paríži, aby rozhodli o hraniciach a o osude porazených.",
+  blocks:[
+    {t:"list", h:"Konferencia", li:[
+      "Začala sa <b>18. 1. 1919</b>.",
+      "Rokovalo sa o: <b>mierových zmluvách, hraniciach, osude porazených, Spoločnosti národov</b>.",
+      "<b>Rada piatich</b>: <b>USA, Veľká Británia, Francúzsko, Taliansko, Japonsko</b>.",
+      "<b>Georges Clemenceau</b> a <b>Woodrow Wilson</b> (<b>program 14 bodov</b>).",
+      "<b>Versaillský mierový systém</b> – nové usporiadanie hraníc v Európe.",
+      "Mierové zmluvy: <b>Versaillská, Saint-germainská, Trianonská</b>."
+    ]},
+    {t:"extra", x:"Clemenceau zastupoval Francúzsko, Wilson bol prezident USA a program 14 bodov bol jeho. Versaillská zmluva bola s Nemeckom, Saint-germainská s Rakúskom a Trianonská s Maďarskom."},
+    {t:"tip", x:"Rada piatich = štyria víťazi, ktorých už poznáš (USA, Veľká Británia, Francúzsko, Taliansko), a k nim <b>Japonsko</b>. Rusko tam nie je, lebo z vojny vystúpilo."}
+  ],
+  must:[
+    "18. 1. 1919 – začiatok Parížskej mierovej konferencie",
+    "Rada piatich: USA, Veľká Británia, Francúzsko, Taliansko, Japonsko",
+    "Georges Clemenceau a Woodrow Wilson (program 14 bodov)",
+    "Versaillský mierový systém = nové usporiadanie hraníc v Európe",
+    "Zmluvy: Versaillská, Saint-germainská, Trianonská"
+  ],
+  qs:[
+    {t:"date", q:"Kedy sa začala Parížska mierová konferencia? Napíš celý dátum.", n:[18,1,1919], sol:"18. 1. 1919",
+     e:"Parížska mierová konferencia sa začala 18. 1. 1919."},
+    {t:"multi", q:"Ktoré štáty tvorili Radu piatich?", ok:["USA","Veľká Británia","Francúzsko","Taliansko","Japonsko"], no:["Nemecko","Rusko","Rakúsko"],
+     e:"Rada piatich: USA, Veľká Británia, Francúzsko, Taliansko, Japonsko."},
+    {t:"mc", q:"Kto prišiel s programom 14 bodov?", o:["Woodrow Wilson","Wilhelm II.","Lenin","Brusilov"],
+     e:"Program 14 bodov patrí k Woodrowovi Wilsonovi."},
+    {t:"txt", q:"Ako sa volá mierový systém, ktorý znamenal nové usporiadanie hraníc v Európe? (______ mierový systém)",
+     acc:["Versaillský","Versaillský mierový systém","Versaillský systém","Versailský","Versailský mierový systém","Versaillesský","Versaillesky","Versajský","Versajský mierový systém","Versailles"], sol:"Versaillský mierový systém",
+     e:"Versaillský mierový systém = nové usporiadanie hraníc v Európe."},
+    {t:"multi", q:"Označ mierové zmluvy z Parížskej mierovej konferencie.", ok:["Versaillská","Saint-germainská","Trianonská"], no:["Brest-Litovská","Sarajevská"],
+     e:"Mierové zmluvy: Versaillská, Saint-germainská, Trianonská. Brest-Litovský mier uzavrelo Rusko ešte počas vojny."},
+    {t:"multi", q:"O čom sa na konferencii rokovalo?", ok:["o mierových zmluvách","o hraniciach","o osude porazených","o Spoločnosti národov"], no:["o vyhlásení novej vojny Rusku","o obnovení Trojspolku"],
+     e:"Rokovalo sa o mierových zmluvách, hraniciach, osude porazených a o Spoločnosti národov."},
+    {t:"mc", q:"Ktorý ázijský štát bol členom Rady piatich?", o:["Japonsko","Čína","India","Osmanská ríša"],
+     e:"Piatym členom Rady piatich bolo Japonsko."},
+    {t:"mc", q:"Ktoré dve osobnosti máš v poznámkach pri Parížskej mierovej konferencii?",
+     o:["Georges Clemenceau a Woodrow Wilson","Wilhelm II. a František Jozef I.","Lenin a Mikuláš II.","Gavrilo Princip a Brusilov"],
+     e:"Pri konferencii sú v poznámkach Georges Clemenceau a Woodrow Wilson."},
+    {t:"mc", q:"Čo znamenal Versaillský mierový systém?", o:["nové usporiadanie hraníc v Európe","vojenský plán Nemecka","spojenectvo Ruska a Francúzska","nový druh zbrane"],
+     e:"Versaillský mierový systém = nové usporiadanie hraníc v Európe."},
+    {t:"mc", q:"V ktorom meste sa mierová konferencia konala?", o:["v Paríži","v Ženeve","v Sarajeve","v Berlíne"],
+     e:"Je to Parížska mierová konferencia, konala sa v Paríži. V Ženeve neskôr vznikla Spoločnosť národov."}
+  ]
+},
+{
+  id:"utrapy",
+  title:"Útrapy 1. svetovej vojny",
+  short:"Život doma a na fronte",
+  intro:"Vojna netrápila len vojakov v zákopoch. Ťažko sa žilo aj ľuďom, ktorí zostali doma.",
+  blocks:[
+    {t:"two",
+      a:{h:"Doma", li:["brali oceľ","vojna berie všetko všetkým","dezercia","udavači dostávali odmeny","jedlo na prídel (lístky)","práca žien","choroba červienka","rabovanie"]},
+      b:{h:"Na fronte", li:["moderný boj vs. starý boj","podmienky života vo vojne","plyn – chlór, yperit","kruté zaobchádzanie s vojakmi"]}},
+    {t:"list", h:"K dezercii", li:[
+      "<b>Dezercia</b>: vojaci radšej riskli <b>rozsudok smrti</b> ako vojnu."
+    ]},
+    {t:"extra", x:"Dezercia je útek vojaka z armády. „Brali oceľ“ znamená, že ľuďom brali kov na výrobu zbraní. Jedlo na prídel: potraviny sa dali dostať len na lístky a v obmedzenom množstve. Červienka je nákazlivá črevná choroba. Rabovanie je vykrádanie a plienenie."},
+    {t:"tip", x:"Na fronte sú len veci, ktoré sa týkajú <b>boja a vojakov</b> (boj, plyn, podmienky, zaobchádzanie s vojakmi). Všetko ostatné patrí pod <b>Doma</b>."}
+  ],
+  must:[
+    "Doma: brali oceľ, jedlo na prídel (lístky), práca žien, udavači dostávali odmeny, dezercia, červienka, rabovanie",
+    "Na fronte: moderný boj vs. starý boj, podmienky života, plyn (chlór, yperit), kruté zaobchádzanie s vojakmi"
+  ],
+  qs:[
+    {t:"group", q:"Roztrieď útrapy vojny podľa poznámok.", g:["Doma","Na fronte"],
+     a:["brali oceľ","jedlo na prídel (lístky)","práca žien","udavači dostávali odmeny"],
+     b:["plyn – chlór, yperit","moderný boj vs. starý boj","kruté zaobchádzanie s vojakmi"],
+     e:"Doma: brali oceľ, jedlo na prídel, práca žien, udavači. Na fronte: plyn, moderný boj vs. starý boj, kruté zaobchádzanie s vojakmi."},
+    {t:"txt", q:"Ako sa nazýva útek vojaka z armády?", acc:["dezercia","dezertovanie","dezertácia","zbehnutie"], sol:"dezercia",
+     e:"Útek vojaka z armády je dezercia. Vojaci radšej riskli rozsudok smrti ako vojnu."},
+    {t:"mc", q:"Čo znamená „jedlo na prídel“?",
+     o:["potraviny sa dali dostať len na lístky a v obmedzenom množstve","jedlo sa rozdávalo zadarmo a bez obmedzenia","jedlo dostávali iba vojaci na fronte","jedlo sa dovážalo z kolónií"],
+     e:"Jedlo bolo na prídel, teda na lístky a v obmedzenom množstve."},
+    {t:"mc", q:"Kto dostával počas vojny odmeny?", o:["udavači","dezertéri","ženy v továrňach","vojnoví zajatci"],
+     e:"Odmeny dostávali udavači."},
+    {t:"mc", q:"Ktorá choroba je v poznámkach medzi útrapami vojny?", o:["červienka","mor","malária","kiahne"],
+     e:"V poznámkach je choroba červienka."},
+    {t:"mc", q:"Kto doma pracoval, keď boli muži na fronte?", o:["ženy","udavači","vojnoví zajatci","nikto"],
+     e:"Doma pracovali ženy."},
+    {t:"multi", q:"Ktoré bojové plyny sa používali na fronte?", ok:["chlór","yperit"], no:["hélium","kyslík","neón"],
+     e:"Na fronte sa používal plyn chlór a yperit."},
+    {t:"mc", q:"Čo vojakom hrozilo za dezerciu?", o:["rozsudok smrti","pokuta","preloženie do inej jednotky","prídel jedla navyše"],
+     e:"Za dezerciu hrozil rozsudok smrti a vojaci ho radšej riskli, než by zostali vo vojne."},
+    {t:"mc", q:"Čo sa ľuďom doma bralo na vojnové účely?", o:["oceľ","knihy","nábytok","hudobné nástroje"],
+     e:"Ľuďom brali oceľ."}
+  ]
+},
+{
+  id:"staty",
+  title:"Nové štáty na mape Európy",
+  short:"Zrútené monarchie, nové štáty, Spoločnosť národov",
+  intro:"Tri veľké ríše sa rozpadli a na ich mieste vznikol celý pás nových štátov od Fínska až po Balkán.",
+  blocks:[
+    {t:"list", h:"Čo sa zrútilo", li:[
+      "Zrútili sa <b>tri veľké monarchie</b> – <b>Nemecko, Rusko a Rakúsko-Uhorsko</b>."
+    ]},
+    {t:"list", h:"Vznikli", li:[
+      "<b>Fínsko</b> – dlho bolo pod nadvládou <b>Ruska</b>",
+      "<b>Estónsko, Lotyšsko, Litva</b> – dlho boli pod nadvládou <b>Ruska</b>",
+      "<b>Poľská republika</b> – jej územie bolo dovtedy obsadené: <b>západ – Nemecko, východ – Rusko, juhovýchod – Rakúsko</b>",
+      "<b>Maďarské kráľovstvo</b> a <b>Rakúska republika</b> – museli uznať samostatnosť novovzniknutých republík",
+      "<b>ČSR</b> – Československo",
+      "<b>Juhoslávia</b> – vznikla spojením častí, ktoré sa nachádzali na <b>Balkáne</b> = Srbsko, Chorvátsko, Slovinsko, Bosna a Hercegovina, Čierna Hora, Severné Macedónsko"
+    ]},
+    {t:"map", m:"1919"},
+    {t:"list", h:"Menšiny a Spoločnosť národov", li:[
+      "Vo všetkých štátoch žilo väčšie množstvo <b>národnostných menšín</b>.",
+      "<b>10. 1. 1920</b> vznikla v <b>Ženeve</b> <b>Spoločnosť národov</b> – mala riešiť konflikty medzi štátmi <b>mierovou cestou</b>."
+    ]},
+    {t:"tip", x:"Nové štáty si prejdi zhora nadol ako na mape: <b>Fínsko → Estónsko → Lotyšsko → Litva → Poľsko → ČSR → Rakúsko a Maďarsko → Juhoslávia</b>."}
+  ],
+  must:[
+    "Zrútili sa tri monarchie: Nemecko, Rusko, Rakúsko-Uhorsko",
+    "Fínsko, Estónsko, Lotyšsko, Litva – predtým pod nadvládou Ruska",
+    "Poľsko: západ Nemecko, východ Rusko, juhovýchod Rakúsko",
+    "Juhoslávia: Srbsko, Chorvátsko, Slovinsko, Bosna a Hercegovina, Čierna Hora, Severné Macedónsko",
+    "10. 1. 1920 – Ženeva – Spoločnosť národov"
+  ],
+  qs:[
+    {t:"multi", q:"Ktoré tri veľké monarchie sa po vojne zrútili?", ok:["Nemecko","Rusko","Rakúsko-Uhorsko"], no:["Francúzsko","Veľká Británia","Taliansko"],
+     e:"Zrútili sa tri veľké monarchie: Nemecko, Rusko a Rakúsko-Uhorsko."},
+    {t:"multi", q:"Ktoré nové štáty boli predtým dlho pod nadvládou Ruska?", ok:["Fínsko","Estónsko","Lotyšsko","Litva"], no:["Juhoslávia","ČSR","Rakúska republika"],
+     e:"Pod nadvládou Ruska boli dlho Fínsko, Estónsko, Lotyšsko a Litva."},
+    {t:"multi", q:"Spojením ktorých častí vznikla Juhoslávia?", ok:["Srbsko","Chorvátsko","Slovinsko","Bosna a Hercegovina","Čierna Hora","Severné Macedónsko"], no:["Bulharsko","Maďarsko"],
+     e:"Juhoslávia: Srbsko, Chorvátsko, Slovinsko, Bosna a Hercegovina, Čierna Hora, Severné Macedónsko."},
+    {t:"date", q:"Kedy vznikla Spoločnosť národov? Napíš celý dátum.", n:[10,1,1920], sol:"10. 1. 1920",
+     e:"Spoločnosť národov vznikla 10. 1. 1920 v Ženeve."},
+    {t:"txt", q:"V ktorom meste vznikla Spoločnosť národov?", acc:["Ženeva","v Ženeve","Ženeve","Geneva","Genf"], sol:"Ženeva",
+     e:"Spoločnosť národov vznikla v Ženeve."},
+    {t:"mc", q:"Akú úlohu mala Spoločnosť národov?",
+     o:["riešiť konflikty medzi štátmi mierovou cestou","viesť spoločnú armádu Dohody","rozdeľovať kolónie medzi víťazov","trestať dezertérov"],
+     e:"Spoločnosť národov mala riešiť konflikty medzi štátmi mierovou cestou."},
+    {t:"mc", q:"Ktoré tri štáty mali dovtedy obsadené územie Poľska?", o:["Nemecko, Rusko a Rakúsko","Francúzsko, Taliansko a Rusko","Nemecko, Bulharsko a Srbsko","Rusko, Fínsko a Litva"],
+     e:"Poľsko bolo obsadené: západ – Nemecko, východ – Rusko, juhovýchod – Rakúsko."},
+    {t:"mc", q:"Čo museli uznať Maďarské kráľovstvo a Rakúska republika?",
+     o:["samostatnosť novovzniknutých republík","nadvládu Ruska","nový Trojspolok","že vojnu vyhrali"],
+     e:"Maďarské kráľovstvo a Rakúska republika museli uznať samostatnosť novovzniknutých republík."},
+    {t:"txt", q:"Ako sa volal nový spoločný štát Čechov a Slovákov?", acc:["Československo","ČSR","Česko-Slovensko","Československá republika","Česko-Slovenská republika"], sol:"Československo (ČSR)",
+     e:"Vznikla ČSR – Československo."},
+    {t:"tf", q:"V nových štátoch žil vždy len jeden národ, bez národnostných menšín.", a:false,
+     e:"Vo všetkých štátoch žilo väčšie množstvo národnostných menšín."},
+    {t:"mc", q:"Kde ležali časti, z ktorých vznikla Juhoslávia?", o:["na Balkáne","pri Baltskom mori","v Alpách","v Karpatoch"],
+     e:"Juhoslávia vznikla spojením častí, ktoré sa nachádzali na Balkáne."},
+    {t:"mc", q:"Kto mal dovtedy obsadenú západnú časť Poľska?", o:["Nemecko","Rusko","Rakúsko","Francúzsko"],
+     e:"Západ Poľska malo obsadené Nemecko, východ Rusko a juhovýchod Rakúsko."}
+  ]
+}
+];
+
+/* ===== DATA: SCHEMATICKE MAPY (dlazdice v mriezke 4 stlpcov) =====
+   kazda dlazdica: [nazov, trieda, grid-area "riadok / stlpec / riadok-koniec / stlpec-koniec"] */
+var MAPS = {
+  "1914":{
+    title:"Kto stál proti komu",
+    tiles:[
+      ["Veľká Británia &#9733;","d","1 / 1 / 2 / 2"],
+      ["Rusko &#9733;","d","1 / 4 / 4 / 5"],
+      ["Belgicko","n","2 / 1 / 3 / 2"],
+      ["Nemecko &#9679;","c","2 / 2 / 3 / 4"],
+      ["Francúzsko &#9733;","d","3 / 1 / 5 / 2"],
+      ["Rakúsko-Uhorsko &#9679;","c","3 / 2 / 4 / 4"],
+      ["Taliansko &#9733;","d","4 / 2 / 6 / 3"],
+      ["Srbsko &#9733;","d","4 / 3 / 5 / 4"],
+      ["Bulharsko &#9679;","c","4 / 4 / 5 / 5"],
+      ["Osmanská ríša &#9679;","c","5 / 4 / 6 / 5"]
+    ],
+    legend:[["#2563eb","&#9733; Dohoda"],["#c2410c","&#9679; Centrálne mocnosti"],["#e5eaf4","neutrálne Belgicko"]],
+    note:"Schéma podľa mapy v zošite, nie presná mapa."
+  },
+  "1919":{
+    title:"Nové štáty od severu na juh",
+    tiles:[
+      ["Fínsko","new","1 / 3 / 2 / 4"],
+      ["Estónsko","new","2 / 3 / 3 / 4"],
+      ["Lotyšsko","new","3 / 3 / 4 / 4"],
+      ["Litva","new","4 / 3 / 5 / 4"],
+      ["Rusko","old","1 / 4 / 6 / 5"],
+      ["Nemecko","old","5 / 1 / 7 / 2"],
+      ["Poľsko","new","5 / 2 / 6 / 4"],
+      ["ČSR","new","6 / 2 / 7 / 5"],
+      ["Rakúsko","new","7 / 2 / 8 / 3"],
+      ["Maďarsko","new","7 / 3 / 8 / 5"],
+      ["Juhoslávia","new","8 / 2 / 9 / 4"]
+    ],
+    legend:[["#15803d","nové štáty"],["#e5eaf4","Nemecko a Rusko (zrútené monarchie)"]],
+    note:"Schéma, nie presná mapa. Tretia zrútená monarchia, Rakúsko-Uhorsko, z mapy zmizla úplne."
+  }
+};
+
+/* ===== DATA: TAHAK ===== */
+var TIMELINE = [
+  ["28. 6. 1914","atentát v Sarajeve – Gavrilo Princip zavraždil Františka Ferdinanda d'Este"],
+  ["28. 7. 1914","Rakúsko-Uhorsko vypovedalo vojnu Srbsku = začiatok 1. svetovej vojny"],
+  ["1914","bitka pri rieke Marne"],
+  ["1915","Ypres – prvýkrát použité chemické zbrane"],
+  ["máj 1915","dlhý ústup Rusov pod nemeckým tlakom"],
+  ["1916","bitky pri rieke Somme a pri meste Verdun"],
+  ["leto 1916","prechodný úspech Rusov pod vedením Brusilova"],
+  ["marec 1917","Februárová revolúcia – cár Mikuláš II. odstúpil"],
+  ["apríl 1917","vstup USA do vojny"],
+  ["1917","Ypres – znova chemické zbrane"],
+  ["november 1917","Októbrová revolúcia – boľševici a Lenin pri moci"],
+  ["marec 1918","Brest-Litovský mier – Rusko s Centrálnymi mocnosťami"],
+  ["11. 11. 1918","Nemecko podpísalo prímerie = koniec vojny"],
+  ["18. 1. 1919","začiatok Parížskej mierovej konferencie"],
+  ["10. 1. 1920","v Ženeve vznikla Spoločnosť národov"]
+];
+var PEOPLE = [
+  ["Gavrilo Princip","spáchal atentát v Sarajeve"],
+  ["František Ferdinand d'Este","obeť atentátu, Rakúsko-Uhorsko"],
+  ["Wilhelm II.","nemecký cisár, využil atentát na rozpútanie vojny"],
+  ["František Jozef I.","panovník Rakúsko-Uhorska, dal Srbsku ultimátum"],
+  ["Brusilov","viedol Rusov pri prechodnom úspechu v lete 1916"],
+  ["Mikuláš II.","ruský cár, po Februárovej revolúcii odstúpil"],
+  ["Lenin","viedol boľševikov, Októbrová revolúcia"],
+  ["Zimmermann","jeho telegram súvisí so vstupom USA do vojny"],
+  ["Woodrow Wilson","program 14 bodov, Parížska mierová konferencia"],
+  ["Georges Clemenceau","Parížska mierová konferencia"]
+];
+var TERMS = [
+  ["Trojspolok","Rakúsko-Uhorsko, Nemecko, Taliansko"],
+  ["Dohoda","Rusko, Francúzsko, Veľká Británia"],
+  ["Centrálne mocnosti","Nemecko, Rakúsko-Uhorsko, Osmanská ríša, Bulharsko – boli v strede Európy"],
+  ["Ultimátum","výstražný návrh sprevádzaný konkrétnou hrozbou"],
+  ["Príčiny vojny","kolónie, prvenstvo vo svete, Balkán, zbrojenie, Alsasko a Lotrinsko"],
+  ["Zákopová vojna","zdĺhavá a ťažká vojna na západnom fronte"],
+  ["Chemické zbrane","chlór, yperit – Ypres 1915 a 1917"],
+  ["Brest-Litovský mier","boľševické Rusko s Centrálnymi mocnosťami, marec 1918"],
+  ["Straty na životoch","8,5 milióna vojenských a 13 miliónov civilných obetí"],
+  ["Rada piatich","USA, Veľká Británia, Francúzsko, Taliansko, Japonsko"],
+  ["Versaillský mierový systém","nové usporiadanie hraníc v Európe"],
+  ["Mierové zmluvy","Versaillská, Saint-germainská, Trianonská"],
+  ["Zrútené monarchie","Nemecko, Rusko, Rakúsko-Uhorsko"],
+  ["Juhoslávia","Srbsko, Chorvátsko, Slovinsko, Bosna a Hercegovina, Čierna Hora, Severné Macedónsko"],
+  ["Spoločnosť národov","10. 1. 1920, Ženeva – riešiť konflikty medzi štátmi mierovou cestou"],
+  ["Dezercia","útek vojaka z armády"]
+];
+
+/* kazda otazka si pamata, z ktorej temy je */
+var ALLQ = [];
+(function tagQuestions(){
+  var i, j;
+  for(i = 0; i < LESSONS.length; i++){
+    for(j = 0; j < LESSONS[i].qs.length; j++){
+      LESSONS[i].qs[j].li = i;
+      ALLQ.push(LESSONS[i].qs[j]);
+    }
+  }
+})();
+
+/* ===== POKROK (ulozeny v prehliadaci) ===== */
+var KEY = "sv1-pokrok-v1";
+var P = {quiz:{}, fin:null, sound:true};
+function loadProgress(){
+  try {
+    var raw = window.localStorage.getItem(KEY);
+    if(!raw){ return; }
+    var o = JSON.parse(raw);
+    if(o && typeof o === "object"){
+      if(o.quiz && typeof o.quiz === "object"){ P.quiz = o.quiz; }
+      if(o.fin && typeof o.fin === "object"){ P.fin = o.fin; }
+      if(o.sound === false){ P.sound = false; }
+    }
+  } catch(err){ /* bez ulozeneho pokroku appka funguje dalej */ }
+}
+function saveProgress(){
+  try { window.localStorage.setItem(KEY, JSON.stringify(P)); }
+  catch(err){ /* sukromne okno alebo plne ulozisko */ }
+}
+function passed(i){
+  var r = P.quiz[LESSONS[i].id];
+  return !!(r && r.total && (r.best / r.total) >= PASS);
+}
+function nextIdx(){
+  var i;
+  for(i = 0; i < LESSONS.length; i++){ if(!passed(i)){ return i; } }
+  return -1;
+}
+
+/* ===== ZVUK (Web Audio, ziadne subory) ===== */
+var ac = null;
+function ensureAudio(){
+  if(!ac){
+    try { ac = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(err){ ac = null; }
+  }
+  if(ac && ac.state === "suspended"){ ac.resume(); }
+}
+function beep(freq, dur, type, vol, delay){
+  if(!P.sound){ return; }
+  ensureAudio();
+  if(!ac){ return; }
+  var t = ac.currentTime + (delay || 0);
+  var osc = ac.createOscillator();
+  var gain = ac.createGain();
+  osc.type = type || "sine";
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(vol || 0.07, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.03);
+}
+function sGood(){ beep(660, 0.12, "sine", 0.09); beep(990, 0.18, "sine", 0.08, 0.1); }
+function sBad(){ beep(200, 0.3, "sawtooth", 0.06); }
+function sWin(){ beep(523, 0.14, "triangle", 0.09); beep(659, 0.14, "triangle", 0.09, 0.14); beep(784, 0.28, "triangle", 0.09, 0.28); }
+function sClick(){ beep(520, 0.05, "sine", 0.05); }
+
+/* ===== POMOCNE FUNKCIE ===== */
+function shuffle(arr){
+  var i, j, tmp;
+  for(i = arr.length - 1; i > 0; i--){
+    j = Math.floor(Math.random() * (i + 1));
+    tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+/* normalizacia napisanej odpovede: male pismena, bez diakritiky, bez interpunkcie */
+function norm(s){
+  s = (s === null || s === undefined) ? "" : String(s);
+  s = s.toLowerCase().trim();
+  /* NFD rozlozi pismeno na zakladne pismeno + znamienko, nasledne zahodime vsetko mimo ASCII */
+  if(s.normalize){ s = s.normalize("NFD").replace(/[^\x00-\x7F]/g, ""); }
+  s = s.replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  return s;
+}
+/* vzdialenost dvoch retazcov, aby drobny preklep nebol rovno chyba */
+function lev(a, b){
+  var m = a.length, n = b.length, i, j, prev, cur, tmp;
+  if(m === 0){ return n; }
+  if(n === 0){ return m; }
+  prev = [];
+  for(j = 0; j <= n; j++){ prev[j] = j; }
+  for(i = 1; i <= m; i++){
+    cur = [i];
+    for(j = 1; j <= n; j++){
+      tmp = (a.charAt(i - 1) === b.charAt(j - 1)) ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + tmp);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function txtOk(val, acc){
+  var v = norm(val), i, a;
+  if(!v){ return false; }
+  for(i = 0; i < acc.length; i++){
+    a = norm(acc[i]);
+    if(v === a){ return true; }
+    if(a.length > 5 && lev(v, a) <= 1){ return true; }
+  }
+  return false;
+}
+/* datum: mesiac moze byt cislom, slovom (v lubovolnom pade) alebo rimskou cislicou */
+var MONTHS = [
+  [/\bjanuar\w*/g, 1], [/\bfebruar\w*/g, 2], [/\bmar(ec|ca|ci|cu|com)\b/g, 3], [/\bapril\w*/g, 4],
+  [/\bmaj\w*/g, 5], [/\bjun\w*/g, 6], [/\bjul\w*/g, 7], [/\baugust\w*/g, 8],
+  [/\bseptemb\w*/g, 9], [/\boktob\w*/g, 10], [/\bnovemb\w*/g, 11], [/\bdecemb\w*/g, 12]
+];
+/* "v" tu chyba naschval: je to predlozka ("v marci"), nie rimska patka */
+var ROMAN = {i:1, ii:2, iii:3, iv:4, vi:6, vii:7, viii:8, ix:9, x:10, xi:11, xii:12};
+function dateNums(val){
+  var s = norm(val), i, toks, out = [];
+  for(i = 0; i < MONTHS.length; i++){ s = s.replace(MONTHS[i][0], " " + MONTHS[i][1] + " "); }
+  toks = s.split(" ");
+  for(i = 0; i < toks.length; i++){
+    if(/^\d+$/.test(toks[i])){ out.push(parseInt(toks[i], 10)); }
+    else if(ROMAN.hasOwnProperty(toks[i])){ out.push(ROMAN[toks[i]]); }
+  }
+  return out;
+}
+/* staci, ked koniec napisaneho datumu sedi: pri otazke na mesiac a rok sa uzna aj cely datum */
+function dateOk(val, want){
+  var got = dateNums(val), i, off;
+  if(got.length < want.length){ return false; }
+  off = got.length - want.length;
+  for(i = 0; i < want.length; i++){
+    if(got[off + i] !== want[i]){ return false; }
+  }
+  return true;
+}
+function escAttr(s){
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function letter(i){ return ["A","B","C","D","E"][i] || "?"; }
+function gradeOf(pct){
+  if(pct >= 90){ return 1; }
+  if(pct >= 75){ return 2; }
+  if(pct >= 50){ return 3; }
+  if(pct >= 30){ return 4; }
+  return 5;
+}
+function gradeWord(g){
+  return ["", "výborný", "chválitebný", "dobrý", "dostatočný", "nedostatočný"][g];
+}
+function setAccent(i){
+  var p = PAL[i % PAL.length];
+  document.documentElement.style.setProperty("--accent", p.c);
+  document.documentElement.style.setProperty("--soft", p.s);
+}
+
+/* ===== PRIPRAVA OTAZKY NA ZOBRAZENIE =====
+   src drzi povodnu otazku, aby sa dala znova zamiesat bez straty spravnej odpovede */
+function prepare(src){
+  var q = {src:src, t:src.t, q:src.q, e:src.e, li:src.li};
+  var arr = [], i, sorted, guard;
+  if(src.t === "mc"){
+    for(i = 0; i < src.o.length; i++){ arr.push({x:src.o[i], ok:(i === 0)}); }
+    shuffle(arr);
+    q.o = []; q.a = 0;
+    for(i = 0; i < arr.length; i++){ q.o.push(arr[i].x); if(arr[i].ok){ q.a = i; } }
+  } else if(src.t === "tf"){
+    q.o = ["Pravda", "Nepravda"];
+    q.a = src.a ? 0 : 1;
+  } else if(src.t === "multi"){
+    for(i = 0; i < src.ok.length; i++){ arr.push({x:src.ok[i], ok:true}); }
+    for(i = 0; i < src.no.length; i++){ arr.push({x:src.no[i], ok:false}); }
+    q.items = shuffle(arr);
+  } else if(src.t === "group"){
+    for(i = 0; i < src.a.length; i++){ arr.push({x:src.a[i], g:0}); }
+    for(i = 0; i < src.b.length; i++){ arr.push({x:src.b[i], g:1}); }
+    q.items = shuffle(arr);
+    q.g = src.g;
+  } else if(src.t === "order"){
+    for(i = 0; i < src.o.length; i++){ arr.push({x:src.o[i], pos:i}); }
+    /* nesmie vyjst uz zoradene, inak by otazka nic nepytala */
+    guard = 0;
+    do {
+      shuffle(arr);
+      sorted = true;
+      for(i = 0; i < arr.length; i++){ if(arr[i].pos !== i){ sorted = false; } }
+      guard++;
+    } while(sorted && arr.length > 1 && guard < 20);
+    q.items = arr;
+  } else if(src.t === "txt"){
+    q.acc = src.acc;
+    q.sol = src.sol || src.acc[0];
+  } else if(src.t === "date"){
+    q.n = src.n;
+    q.sol = src.sol;
+  }
+  return q;
+}
+function blankAns(q){
+  var out = [], i;
+  if(q.t === "multi"){ for(i = 0; i < q.items.length; i++){ out.push(false); } return out; }
+  if(q.t === "group"){ for(i = 0; i < q.items.length; i++){ out.push(-1); } return out; }
+  if(q.t === "order"){ return out; }
+  if(q.t === "txt" || q.t === "date"){ return ""; }
+  return -1;
+}
+function isOk(q, a){
+  var i;
+  if(q.t === "mc" || q.t === "tf"){ return a === q.a; }
+  if(q.t === "multi"){
+    for(i = 0; i < q.items.length; i++){ if(!!a[i] !== q.items[i].ok){ return false; } }
+    return true;
+  }
+  if(q.t === "group"){
+    for(i = 0; i < q.items.length; i++){ if(a[i] !== q.items[i].g){ return false; } }
+    return true;
+  }
+  if(q.t === "order"){
+    if(a.length !== q.items.length){ return false; }
+    for(i = 0; i < a.length; i++){ if(q.items[a[i]].pos !== i){ return false; } }
+    return true;
+  }
+  if(q.t === "txt"){ return txtOk(a, q.acc); }
+  if(q.t === "date"){ return dateOk(a, q.n); }
+  return false;
+}
+/* da sa uz odpoved skontrolovat? */
+function ready(q, a){
+  var i;
+  if(q.t === "multi"){ for(i = 0; i < a.length; i++){ if(a[i]){ return true; } } return false; }
+  if(q.t === "group"){ for(i = 0; i < a.length; i++){ if(a[i] < 0){ return false; } } return true; }
+  if(q.t === "order"){ return a.length === q.items.length; }
+  return true;
+}
+/* text spravnej odpovede a odpovede ziaka do prehladu chyb */
+function solText(q){
+  var out = [], i, g0 = [], g1 = [], sorted;
+  if(q.t === "mc" || q.t === "tf"){ return q.o[q.a]; }
+  if(q.t === "multi"){
+    for(i = 0; i < q.items.length; i++){ if(q.items[i].ok){ out.push(q.items[i].x); } }
+    return out.join(", ");
+  }
+  if(q.t === "group"){
+    for(i = 0; i < q.items.length; i++){ (q.items[i].g === 0 ? g0 : g1).push(q.items[i].x); }
+    return "<b>" + q.g[0] + ":</b> " + g0.join(", ") + "<br><b>" + q.g[1] + ":</b> " + g1.join(", ");
+  }
+  if(q.t === "order"){
+    sorted = q.items.slice().sort(function(x, y){ return x.pos - y.pos; });
+    for(i = 0; i < sorted.length; i++){ out.push((i + 1) + ". " + sorted[i].x); }
+    return out.join("<br>");
+  }
+  return q.sol;
+}
+function yourText(q, a){
+  var out = [], i;
+  if(q.t === "mc" || q.t === "tf"){ return q.o[a]; }
+  if(q.t === "multi"){
+    for(i = 0; i < q.items.length; i++){ if(a[i]){ out.push(q.items[i].x); } }
+    return out.join(", ");
+  }
+  if(q.t === "group"){
+    for(i = 0; i < q.items.length; i++){
+      if(a[i] !== q.items[i].g){ out.push(q.items[i].x + " → " + q.g[a[i]]); }
+    }
+    return out.join(", ");
+  }
+  if(q.t === "order"){
+    for(i = 0; i < a.length; i++){ out.push((i + 1) + ". " + q.items[a[i]].x); }
+    return out.join("<br>");
+  }
+  return escAttr(String(a).trim()) || "(nič)";
+}
+var KIND = {
+  mc:"vyber jednu možnosť", tf:"pravda alebo nepravda", txt:"napíš odpoveď", date:"napíš dátum",
+  multi:"označ všetky správne", group:"roztrieď", order:"zoraď"
+};
+
+/* ===== STAV APLIKACIE ===== */
+var S = {
+  screen:"home",
+  li:0,          /* otvorena tema */
+  run:null,      /* beziaca skuska: {kind, li, qs, i, ans, locked, log} */
+  cnt:30         /* pocet otazok vo velkom teste, 0 = vsetky */
+};
+var app = document.getElementById("app");
+
+/* ===== SPOLOCNE KUSY HTML ===== */
+function topbar(sub){
+  return '<div class="topbar">' +
+    '<div class="logo" data-act="home" role="link" tabindex="0">1. svetová vojna</div>' +
+    '<div class="spacer"></div>' +
+    (sub ? '<span class="pill">' + sub + '</span>' : '') +
+    '<button class="sound" data-act="sound" aria-label="Zvuk zapnúť alebo vypnúť">' + (P.sound ? "&#128266;" : "&#128263;") + '</button>' +
+    (S.screen === "home" ? '' : '<button class="btn grey small" data-act="home">Menu</button>') +
+    '</div>';
+}
+function mapHtml(key){
+  var m = MAPS[key], html, i;
+  html = '<div class="card"><h3>' + m.title + '</h3><div class="map">';
+  for(i = 0; i < m.tiles.length; i++){
+    html += '<div class="tile ' + m.tiles[i][1] + '" style="grid-area:' + m.tiles[i][2] + ';">' + m.tiles[i][0] + '</div>';
+  }
+  html += '</div><div class="legend">';
+  for(i = 0; i < m.legend.length; i++){
+    html += '<span><i style="background:' + m.legend[i][0] + ';"></i>' + m.legend[i][1] + '</span>';
+  }
+  html += '</div><div class="small muted" style="margin-top:8px;">' + m.note + '</div></div>';
+  return html;
+}
+function blockHtml(b){
+  var html = "", i;
+  if(b.t === "list"){
+    html = '<div class="card">' + (b.h ? '<h3>' + b.h + '</h3>' : '') + '<ul class="pts">';
+    for(i = 0; i < b.li.length; i++){ html += '<li>' + b.li[i] + '</li>'; }
+    html += '</ul></div>';
+  } else if(b.t === "two"){
+    html = '<div class="card">' + (b.h ? '<h3>' + b.h + '</h3>' : '') + '<div class="two' + (b.k ? ' ' + b.k : '') + '">' +
+      '<div class="side"><h4>' + b.a.h + '</h4><ul>';
+    for(i = 0; i < b.a.li.length; i++){ html += '<li>' + b.a.li[i] + '</li>'; }
+    html += '</ul></div><div class="side b"><h4>' + b.b.h + '</h4><ul>';
+    for(i = 0; i < b.b.li.length; i++){ html += '<li>' + b.b.li[i] + '</li>'; }
+    html += '</ul></div></div></div>';
+  } else if(b.t === "def"){
+    html = '<div class="card"><div class="term"><h3>' + b.n + '</h3><p>' + b.x + '</p></div></div>';
+  } else if(b.t === "dates"){
+    html = '<div class="card">' + (b.h ? '<h3>' + b.h + '</h3>' : '') + '<div class="dates">';
+    for(i = 0; i < b.rows.length; i++){
+      html += '<div class="d">' + b.rows[i][0] + '</div><div>' + b.rows[i][1] + '</div>';
+    }
+    html += '</div></div>';
+  } else if(b.t === "tip"){
+    html = '<div class="note tip"><span class="nh">&#128161; Pomôcka</span>' + b.x + '</div>';
+  } else if(b.t === "extra"){
+    html = '<div class="note extra"><span class="nh">&#128221; ' + (b.h ? b.h : 'Dovysvetlenie') +
+      ' <span class="muted small" style="font-weight:600;">(nie je v zošite)</span></span>' + b.x + '</div>';
+  } else if(b.t === "map"){
+    html = mapHtml(b.m);
+  }
+  return html;
+}
+function questionHtml(q, a, locked){
+  var html = "", ok = locked ? isOk(q, a) : false, i, cls, tag, n, sorted, mine, right, dis;
+  dis = locked ? " disabled" : "";
+  if(q.t === "mc" || q.t === "tf"){
+    html += '<div class="opts">';
+    for(i = 0; i < q.o.length; i++){
+      cls = "opt";
+      if(locked && i === q.a){ cls += " correct"; }
+      if(locked && i === a && a !== q.a){ cls += " wrong"; }
+      html += '<button class="' + cls + '" data-act="pick" data-val="' + i + '"' + dis + '>' +
+        '<span class="lettr">' + letter(i) + '</span><span>' + q.o[i] + '</span></button>';
+    }
+    html += '</div>';
+  } else if(q.t === "multi"){
+    html += '<div class="opts">';
+    for(i = 0; i < q.items.length; i++){
+      cls = "opt"; tag = "";
+      if(!locked && a[i]){ cls += " on"; }
+      if(locked && q.items[i].ok && a[i]){ cls += " correct"; }
+      if(locked && !q.items[i].ok && a[i]){ cls += " wrong"; tag = "nepatrí sem"; }
+      if(locked && q.items[i].ok && !a[i]){ cls += " missed"; tag = "chýbala"; }
+      html += '<button class="' + cls + '" data-act="tog" data-val="' + i + '"' + dis + '>' +
+        '<span class="lettr">' + (a[i] ? "&#10003;" : "") + '</span><span>' + q.items[i].x + '</span>' +
+        (tag ? '<span class="tag">' + tag + '</span>' : '') + '</button>';
+    }
+    html += '</div>';
+    if(!locked){ html += '<div class="hint">Označ všetky správne možnosti, môže ich byť viac.</div>'; }
+  } else if(q.t === "group"){
+    html += '<div class="grp">';
+    for(i = 0; i < q.items.length; i++){
+      mine = a[i]; right = q.items[i].g;
+      html += '<div class="grow' + (locked ? (mine === right ? " okrow" : " badrow") : "") + '">' +
+        '<div class="gname">' + (locked ? (mine === right ? "&#10003; " : "&#10007; ") : "") + q.items[i].x + '</div><div class="gbtns">';
+      for(n = 0; n < 2; n++){
+        cls = "gb";
+        if(!locked && mine === n){ cls += " on"; }
+        if(locked && n === right){ cls += " right"; }
+        if(locked && n === mine && mine !== right){ cls += " wrongsel"; }
+        html += '<button class="' + cls + '" data-act="grp" data-val="' + i + ':' + n + '"' + dis + '>' + q.g[n] + '</button>';
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
+    if(!locked){ html += '<div class="hint">Pri každom riadku vyber, kam patrí.</div>'; }
+  } else if(q.t === "order"){
+    html += '<div class="opts">';
+    if(!locked){
+      for(i = 0; i < q.items.length; i++){
+        n = a.indexOf(i);
+        html += '<button class="opt' + (n >= 0 ? " on" : "") + '" data-act="ord" data-val="' + i + '">' +
+          '<span class="lettr">' + (n >= 0 ? (n + 1) : "") + '</span><span>' + q.items[i].x + '</span></button>';
+      }
+    } else {
+      /* po vyhodnoteni ukazeme spravne poradie a pri kazdom riadku, kam ho dal ziak */
+      sorted = q.items.slice().sort(function(x, y){ return x.pos - y.pos; });
+      for(i = 0; i < sorted.length; i++){
+        n = a.indexOf(q.items.indexOf(sorted[i]));
+        html += '<button class="opt ' + (n === i ? "correct" : "wrong") + '" disabled>' +
+          '<span class="lettr">' + (i + 1) + '</span><span>' + sorted[i].x + '</span>' +
+          (n === i ? '' : '<span class="tag">ty: ' + (n + 1) + '.</span>') + '</button>';
+      }
+    }
+    html += '</div>';
+    if(!locked){ html += '<div class="hint">Ťukaj na udalosti v poradí, v akom sa stali. Ťuknutím na očíslovanú ju odznačíš.</div>'; }
+  } else {
+    html += '<div class="txtwrap">' +
+      '<input class="txtin' + (locked ? (ok ? " okin" : " badin") : "") + '" id="txtin" type="text" ' +
+      (q.t === "date" && q.n.length === 1 ? 'inputmode="numeric" ' : '') +
+      'autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" ' +
+      'placeholder="' + (q.t === "date" ? "Napíš dátum" : "Napíš odpoveď") + '"' +
+      (locked ? ' disabled value="' + escAttr(a) + '"' : '') + '>' +
+      (locked ? '' : '<button class="btn" data-act="check">Skontrolovať</button>') +
+      '</div>';
+    if(!locked){
+      if(q.t === "txt"){ html += '<div class="hint">Na diakritike ani na malom preklepe nezáleží.</div>'; }
+      else if(q.n.length === 3){ html += '<div class="hint">Napíš deň, mesiac a rok, napríklad 5. 3. 1900.</div>'; }
+      else if(q.n.length === 2){ html += '<div class="hint">Stačí mesiac a rok, napríklad „jún 1900“ alebo 6. 1900.</div>'; }
+      else { html += '<div class="hint">Napíš rok.</div>'; }
+    }
+  }
+  if(!locked && (q.t === "multi" || q.t === "group" || q.t === "order")){
+    html += '<div class="row" style="margin-top:14px;">' +
+      '<button class="btn wide" data-act="check"' + (ready(q, a) ? "" : " disabled") + '>Skontrolovať</button></div>';
+  }
+  if(locked){
+    html += '<div class="fb ' + (ok ? "ok" : "no") + '" id="fb">' +
+      '<div class="head">' + (ok ? "&#10004; Správne!" : "&#10008; Nesprávne") + '</div>' +
+      ((ok || q.t === "multi" || q.t === "group" || q.t === "order") ? "" :
+        '<div style="margin-bottom:6px;">Správna odpoveď: <b>' + solText(q) + '</b></div>') +
+      '<div>' + q.e + '</div></div>';
+  }
+  return html;
+}
+function focusInput(){
+  var inp = document.getElementById("txtin");
+  if(inp && !inp.disabled){ inp.focus(); }
+}
+function countOk(log){
+  var n = 0, i;
+  for(i = 0; i < log.length; i++){ if(log[i].ok){ n++; } }
+  return n;
+}
+function missHtml(log, withTopic){
+  var html = "", i, it;
+  for(i = 0; i < log.length; i++){
+    it = log[i];
+    if(it.ok){ continue; }
+    html += '<div class="miss">' +
+      (withTopic ? '<div class="lbl muted">' + LESSONS[it.q.li].title + '</div>' : '') +
+      '<b>' + it.q.q + '</b>' +
+      '<div style="margin-top:6px;">Tvoja odpoveď:<br><span style="color:var(--bad);font-weight:700;">' + yourText(it.q, it.ans) + '</span></div>' +
+      '<div style="margin-top:6px;">Správne:<br><span style="color:var(--ok);font-weight:700;">' + solText(it.q) + '</span></div>' +
+      '<div class="small muted" style="margin-top:6px;">' + it.q.e + '</div>' +
+      '</div>';
+  }
+  return html;
+}
+
+/* ===== OBRAZOVKA: DOMOV (cesta temami) ===== */
+function viewHome(){
+  setAccent(0);
+  var n = LESSONS.length, done = 0, i, r, nx = nextIdx(), started = false, p, cls, sub;
+  for(i = 0; i < n; i++){
+    if(passed(i)){ done++; }
+    if(P.quiz[LESSONS[i].id]){ started = true; }
+  }
+  var html = topbar("") +
+    '<div class="card">' +
+      '<div class="kicker">Dejepis &middot; 9. ročník</div>' +
+      '<h1>1. svetová vojna</h1>' +
+      '<p class="muted">Každú tému sa najprv naučíš a hneď ťa z nej vyskúšam. Potom ide ďalšia téma. Na konci ťa čaká veľký test na známku.</p>' +
+      '<div class="bar"><span style="width:' + Math.round((done / n) * 100) + '%"></span></div>' +
+      '<div class="small muted">Zvládnuté témy: <b>' + done + ' z ' + n + '</b></div>' +
+      '<div class="row" style="margin-top:14px;">';
+  if(nx >= 0){
+    html += '<button class="btn big wide" data-act="lesson" data-val="' + nx + '">' +
+      (started ? "Pokračovať: " : "Začať: ") + (nx + 1) + '. téma &#8594;</button>';
+  } else {
+    html += '<button class="btn big wide" data-act="final">Všetko zvládnuté, ideme na veľký test &#8594;</button>';
+  }
+  html += '</div></div><div class="path">';
+  for(i = 0; i < n; i++){
+    p = PAL[i % PAL.length];
+    r = P.quiz[LESSONS[i].id];
+    cls = "step" + (passed(i) ? " done" : "") + (i === nx ? " next" : "");
+    sub = LESSONS[i].short + (r ? ' &middot; skúška ' + r.best + '/' + r.total : '');
+    html += '<button class="' + cls + '" data-act="lesson" data-val="' + i + '" style="--accent:' + p.c + ';--soft:' + p.s + ';">' +
+      '<span class="num">' + (passed(i) ? "&#10003;" : (i + 1)) + '</span>' +
+      '<span><span class="tt">' + LESSONS[i].title + '</span><br><span class="ss">' + sub + '</span></span>' +
+      '<span class="chev">&#8250;</span></button>';
+  }
+  html += '</div>';
+  var cnts = [[20, "20 otázok"], [30, "30 otázok"], [0, "všetky (" + ALLQ.length + ")"]];
+  html += '<div class="card" style="--accent:#7c3aed;--soft:#f2ecff;">' +
+    '<div class="kicker">Na záver</div><h2>&#127942; Veľký test na známku</h2>' +
+    '<p class="muted">Otázky zo všetkých tém pomiešané dokopy. ' +
+    (done < n ? 'Najlepšie až po všetkých témach, ale spustiť ho môžeš hocikedy.' : 'Všetky témy máš zvládnuté, môžeš ísť na to.') + '</p>' +
+    (P.fin ? '<p><span class="pill">Najlepší výsledok: známka ' + P.fin.grade + ' (' + P.fin.pct + ' %)</span></p>' : '') +
+    '<div class="tabs">';
+  for(i = 0; i < cnts.length; i++){
+    html += '<button class="tab' + (S.cnt === cnts[i][0] ? " on" : "") + '" data-act="cnt" data-val="' + cnts[i][0] + '">' + cnts[i][1] + '</button>';
+  }
+  html += '</div><button class="btn wide" data-act="final">Spustiť veľký test</button></div>';
+  html += '<div class="card"><h2>&#128203; Ťahák</h2>' +
+    '<p class="muted">Všetky dátumy, mená a pojmy na jednom mieste. Dobré na posledné zopakovanie pred písomkou.</p>' +
+    '<button class="btn ghost wide" data-act="cheat">Otvoriť ťahák</button></div>';
+  html += '<div class="small muted" style="padding:0 6px;">' +
+    'Téma je zvládnutá od 80 % v skúške. Známkovanie veľkého testu: 100 – 90 % = 1, 89 – 75 % = 2, 74 – 50 % = 3, 49 – 30 % = 4, menej = 5. ' +
+    'Pokrok sa ukladá len v tomto prehliadači. ' +
+    (started || P.fin ? '<button class="linkbtn" data-act="reset">Vymazať pokrok</button>' : '') +
+    '</div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ===== OBRAZOVKA: VYKLAD TEMY ===== */
+function viewLesson(){
+  var L = LESSONS[S.li], i, r = P.quiz[L.id];
+  setAccent(S.li);
+  var html = topbar("Téma " + (S.li + 1) + " z " + LESSONS.length) +
+    '<div class="card"><div class="kicker">' + (S.li + 1) + '. téma &middot; výklad</div>' +
+    '<h1>' + L.title + '</h1><p class="muted" style="margin:0;">' + L.intro + '</p></div>';
+  for(i = 0; i < L.blocks.length; i++){ html += blockHtml(L.blocks[i]); }
+  html += '<div class="card must"><h3>&#127919; Na písomku určite vedieť</h3><ul class="pts">';
+  for(i = 0; i < L.must.length; i++){ html += '<li>' + L.must[i] + '</li>'; }
+  html += '</ul></div>';
+  if(r){
+    html += '<div class="small muted" style="padding:0 6px 10px;">Tvoj najlepší výsledok v skúške: ' + r.best + ' z ' + r.total + '.</div>';
+  }
+  html += '<div class="dock">' +
+    (S.li > 0 ? '<button class="btn grey" data-act="lesson" data-val="' + (S.li - 1) + '" aria-label="Predchádzajúca téma">&#8592;</button>' : '') +
+    '<button class="btn" data-act="quiz">Vyskúšaj ma (' + L.qs.length + ' otázok) &#8594;</button></div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ===== SKUSANIE (spolocne pre skusku z temy, opravu chyb aj velky test) ===== */
+function startRun(kind, li, list){
+  var qs = [], i;
+  shuffle(list);
+  for(i = 0; i < list.length; i++){ qs.push(prepare(list[i])); }
+  S.run = {kind:kind, li:li, qs:qs, i:0, ans:blankAns(qs[0]), locked:false, log:[]};
+  S.screen = "run";
+  render();
+}
+/* velky test berie otazky z tem postupne dokola, aby bola zastupena kazda tema */
+function pickFinal(count){
+  var pools = [], order = [], out = [], i, any = true;
+  for(i = 0; i < LESSONS.length; i++){
+    pools.push(shuffle(LESSONS[i].qs.slice()));
+    order.push(i);
+  }
+  if(!count || count > ALLQ.length){ count = ALLQ.length; }
+  while(out.length < count && any){
+    any = false;
+    shuffle(order);
+    for(i = 0; i < order.length && out.length < count; i++){
+      if(pools[order[i]].length){ out.push(pools[order[i]].pop()); any = true; }
+    }
+  }
+  return out;
+}
+function viewRun(fresh){
+  var R = S.run, q = R.qs[R.i], last = (R.i === R.qs.length - 1);
+  setAccent(R.kind === "final" || R.li < 0 ? 3 : R.li);
+  var label = (R.kind === "final") ? "Veľký test" : (R.kind === "fix" ? "Oprava chýb" : "Skúška &middot; téma " + (R.li + 1));
+  var pct = Math.round(((R.i + (R.locked ? 1 : 0)) / R.qs.length) * 100);
+  var html = topbar(label) +
+    '<div class="card">' +
+      '<div class="kicker">' + label + '</div>' +
+      '<div class="small muted">Otázka ' + (R.i + 1) + ' z ' + R.qs.length + ' &middot; správne: ' + countOk(R.log) + ' &middot; ' + KIND[q.t] + '</div>' +
+      '<div class="bar"><span style="width:' + pct + '%"></span></div>' +
+      '<h2>' + q.q + '</h2>' +
+      questionHtml(q, R.ans, R.locked) +
+      (R.locked ? '<div class="row" style="margin-top:14px;"><button class="btn wide" data-act="next" id="nextbtn">' +
+        (last ? (R.kind === "final" ? "Vyhodnotiť test" : "Ukázať výsledok") : "Ďalej &#8594;") + '</button></div>' : '') +
+    '</div>';
+  app.innerHTML = html;
+  if(fresh){
+    window.scrollTo(0, 0);
+    focusInput();
+  } else if(R.locked){
+    var nb = document.getElementById("nextbtn");
+    if(nb && nb.scrollIntoView){ nb.scrollIntoView({block:"nearest", behavior:"smooth"}); }
+  }
+}
+function lockRun(){
+  var R = S.run, q = R.qs[R.i], ok = isOk(q, R.ans);
+  R.locked = true;
+  R.log.push({q:q, ans:R.ans, ok:ok});
+  if(ok){ sGood(); } else { sBad(); }
+  viewRun(false);
+}
+function finishRun(){
+  var R = S.run, total = R.log.length, correct = countOk(R.log), id, prev, pct;
+  if(R.kind === "quiz"){
+    id = LESSONS[R.li].id;
+    prev = P.quiz[id];
+    if(!prev || prev.total !== total || correct > prev.best){ P.quiz[id] = {best:correct, total:total}; }
+    saveProgress();
+    S.screen = "quizres";
+  } else if(R.kind === "fix"){
+    S.screen = "quizres";
+  } else {
+    pct = Math.round((correct / total) * 100);
+    if(!P.fin || pct > P.fin.pct){ P.fin = {pct:pct, grade:gradeOf(pct)}; }
+    saveProgress();
+    S.screen = "result";
+  }
+  sWin();
+  render();
+}
+
+/* ===== OBRAZOVKA: VYSLEDOK SKUSKY Z TEMY / OPRAVY CHYB ===== */
+function viewQuizRes(){
+  var R = S.run, total = R.log.length, correct = countOk(R.log), wrong = total - correct;
+  var pct = total ? Math.round((correct / total) * 100) : 0;
+  var fromFinal = (R.li < 0);
+  var ok = fromFinal ? true : passed(R.li);
+  var isLast = (R.li === LESSONS.length - 1);
+  var msg, html;
+  setAccent(fromFinal ? 3 : R.li);
+  if(R.kind === "fix"){
+    msg = (wrong === 0) ? "Všetky chyby sú opravené." : "Ešte niečo ostalo. Skús opravu znova.";
+  } else if(pct === 100){
+    msg = "Bez jedinej chyby. Táto téma ti sedí.";
+  } else if(ok && pct >= PASS * 100){
+    msg = "Téma je zvládnutá. Chyby si ešte môžeš opraviť.";
+  } else {
+    msg = "Na zvládnutie témy treba aspoň 80 %. Oprav si chyby a skús skúšku ešte raz.";
+  }
+  html = topbar("Výsledok") +
+    '<div class="card center">' +
+      '<div class="bigico">' + (wrong === 0 ? "&#127942;" : (pct >= PASS * 100 ? "&#9989;" : "&#128170;")) + '</div>' +
+      '<h1>' + (R.kind === "fix" ? "Oprava chýb" : "Skúška z " + (R.li + 1) + ". témy") + '</h1>' +
+      (fromFinal ? '' : '<p class="muted">' + LESSONS[R.li].title + '</p>') +
+      '<div class="stats">' +
+        '<div class="stat"><b>' + correct + ' / ' + total + '</b>správne</div>' +
+        '<div class="stat"><b>' + pct + ' %</b>úspešnosť</div>' +
+      '</div>' +
+      '<p>' + msg + '</p>' +
+      '<div class="col">';
+  if(wrong > 0){
+    html += '<button class="btn ' + (ok && R.kind !== "fix" ? "ghost" : "") + ' wide" data-act="fix">Opraviť chyby (' + wrong + ')</button>';
+  }
+  if(fromFinal){
+    html += '<button class="btn wide" data-act="final">Nový veľký test</button>';
+  } else {
+    if(ok){
+      html += isLast ?
+        '<button class="btn big wide" data-act="final">Ísť na veľký test &#8594;</button>' :
+        '<button class="btn big wide" data-act="lesson" data-val="' + (R.li + 1) + '">Ďalšia téma &#8594;</button>';
+    }
+    html += '<button class="btn ghost wide" data-act="quiz">Celá skúška znova</button>' +
+      '<button class="btn grey wide" data-act="lesson" data-val="' + R.li + '">Späť na výklad</button>';
+    if(!ok && !isLast){
+      html += '<button class="linkbtn" data-act="lesson" data-val="' + (R.li + 1) + '">Ísť na ďalšiu tému aj tak</button>';
+    }
+  }
+  html += '</div></div>';
+  if(wrong > 0){
+    html += '<div class="card"><h2>Prehľad chýb</h2>' + missHtml(R.log, fromFinal) + '</div>';
+  }
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ===== OBRAZOVKA: VYSLEDOK VELKEHO TESTU ===== */
+function viewResult(){
+  var R = S.run, total = R.log.length, correct = countOk(R.log), wrong = total - correct;
+  var pct = total ? Math.round((correct / total) * 100) : 0;
+  var g = gradeOf(pct), i, by = [], it, html;
+  setAccent(g <= 2 ? 1 : (g === 3 ? 0 : 2));
+  for(i = 0; i < LESSONS.length; i++){ by.push({c:0, t:0}); }
+  for(i = 0; i < R.log.length; i++){
+    it = R.log[i];
+    by[it.q.li].t++;
+    if(it.ok){ by[it.q.li].c++; }
+  }
+  html = topbar("Výsledok") +
+    '<div class="card"><h1 style="text-align:center;">Tvoja známka</h1>' +
+    '<div class="grade">' + g + '</div>' +
+    '<p style="text-align:center;font-weight:700;">' + gradeWord(g) + '</p>' +
+    '<div class="stats">' +
+      '<div class="stat"><b>' + pct + ' %</b>úspešnosť</div>' +
+      '<div class="stat"><b>' + correct + '</b>správne</div>' +
+      '<div class="stat"><b>' + wrong + '</b>chyby</div>' +
+    '</div>' +
+    '<div class="col">' +
+      (wrong > 0 ? '<button class="btn wide" data-act="fix">Opraviť chyby (' + wrong + ')</button>' : '') +
+      '<button class="btn ' + (wrong > 0 ? "ghost" : "") + ' wide" data-act="final">Nový veľký test</button>' +
+      '<button class="btn grey wide" data-act="home">Menu</button>' +
+    '</div></div>';
+  html += '<div class="card"><h2>Ako ti išli témy</h2>';
+  for(i = 0; i < LESSONS.length; i++){
+    if(!by[i].t){ continue; }
+    html += '<div class="trow"><div class="tn">' + (i + 1) + '. ' + LESSONS[i].title + '</div>' +
+      '<div class="ts ' + (by[i].c === by[i].t ? "full" : "part") + '">' + by[i].c + ' / ' + by[i].t + '</div>' +
+      (by[i].c === by[i].t ? '' : '<button class="btn grey small" data-act="lesson" data-val="' + i + '">Zopakovať</button>') +
+      '</div>';
+  }
+  html += '</div>';
+  if(wrong > 0){
+    html += '<div class="card"><h2>Prehľad chýb</h2>' + missHtml(R.log, true) + '</div>';
+  } else {
+    html += '<div class="card center"><h2>Bez chyby! &#127881;</h2><p class="muted">Všetko správne. Na písomku si pripravený.</p></div>';
+  }
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ===== OBRAZOVKA: TAHAK ===== */
+function viewCheat(){
+  setAccent(4);
+  var html = topbar("Ťahák"), i;
+  html += '<div class="card"><h2>&#128197; Dátumy</h2><div class="cheat wide">';
+  for(i = 0; i < TIMELINE.length; i++){
+    html += '<div class="k">' + TIMELINE[i][0] + '</div><div>' + TIMELINE[i][1] + '</div>';
+  }
+  html += '</div></div><div class="card"><h2>&#128100; Osobnosti</h2><div class="cheat wide">';
+  for(i = 0; i < PEOPLE.length; i++){
+    html += '<div class="k" style="white-space:normal;">' + PEOPLE[i][0] + '</div><div>' + PEOPLE[i][1] + '</div>';
+  }
+  html += '</div></div><div class="card"><h2>&#128214; Pojmy a zoznamy</h2><div class="cheat wide">';
+  for(i = 0; i < TERMS.length; i++){
+    html += '<div class="k" style="white-space:normal;">' + TERMS[i][0] + '</div><div>' + TERMS[i][1] + '</div>';
+  }
+  html += '</div></div>' + mapHtml("1914") + mapHtml("1919") +
+    '<div class="dock"><button class="btn" data-act="home">Späť do menu</button></div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ===== ROUTER ===== */
+function render(){
+  if(S.screen === "home"){ viewHome(); }
+  else if(S.screen === "lesson"){ viewLesson(); }
+  else if(S.screen === "run"){ viewRun(true); }
+  else if(S.screen === "quizres"){ viewQuizRes(); }
+  else if(S.screen === "result"){ viewResult(); }
+  else if(S.screen === "cheat"){ viewCheat(); }
+}
+
+/* ===== OVLADANIE (delegovanie udalosti, ziadne inline handlery) ===== */
+app.addEventListener("click", function(ev){
+  var el = ev.target;
+  while(el && el !== app && !(el.getAttribute && el.getAttribute("data-act"))){ el = el.parentNode; }
+  if(!el || el === app || el.disabled){ return; }
+  handle(el.getAttribute("data-act"), el.getAttribute("data-val"));
+});
+app.addEventListener("keydown", function(ev){
+  if(ev.key !== "Enter" && ev.keyCode !== 13){ return; }
+  var t = ev.target;
+  if(!t){ return; }
+  /* Enter v poli na pisanu odpoved funguje ako tlacidlo Skontrolovat */
+  if(t.id === "txtin"){ ev.preventDefault(); handle("check"); return; }
+  if(t.className === "logo"){ handle("home"); }
+});
+
+/* rozbehnuty velky test sa neopusta bez opytania */
+function leaveOk(){
+  var R = S.run;
+  if(S.screen === "run" && R && R.kind === "final" && R.log.length > 0){
+    return window.confirm("Veľký test ešte nie je dokončený. Naozaj ho chceš ukončiť?");
+  }
+  return true;
+}
+
+function handle(act, val){
+  var R = S.run, q, i, parts, inp, list;
+  if(act === "home"){
+    if(!leaveOk()){ return; }
+    S.screen = "home"; sClick(); render(); return;
+  }
+  if(act === "sound"){
+    P.sound = !P.sound;
+    saveProgress();
+    if(P.sound){ ensureAudio(); sClick(); }
+    if(S.screen === "run"){ viewRun(false); } else { render(); }
+    return;
+  }
+  if(act === "lesson"){ S.li = parseInt(val, 10); S.screen = "lesson"; sClick(); render(); return; }
+  if(act === "cheat"){ S.screen = "cheat"; sClick(); render(); return; }
+  if(act === "cnt"){ S.cnt = parseInt(val, 10); sClick(); render(); return; }
+  if(act === "reset"){
+    if(window.confirm("Naozaj vymazať celý pokrok?")){
+      P.quiz = {}; P.fin = null;
+      saveProgress();
+      render();
+    }
+    return;
+  }
+  if(act === "quiz"){
+    /* zo stranky s vysledkom sa opakuje ta ista tema, z vykladu otvorena tema */
+    i = (S.screen === "quizres" && R && R.li >= 0) ? R.li : S.li;
+    S.li = i;
+    sClick();
+    startRun("quiz", i, LESSONS[i].qs.slice());
+    return;
+  }
+  if(act === "final"){ sClick(); startRun("final", -1, pickFinal(S.cnt)); return; }
+  if(act === "fix"){
+    list = [];
+    for(i = 0; i < R.log.length; i++){ if(!R.log[i].ok){ list.push(R.log[i].q.src); } }
+    if(!list.length){ return; }
+    sClick();
+    startRun("fix", (R.kind === "final") ? -1 : R.li, list);
+    return;
+  }
+  if(!R || S.screen !== "run"){ return; }
+  q = R.qs[R.i];
+  if(act === "next"){
+    if(!R.locked){ return; }
+    if(R.i === R.qs.length - 1){ finishRun(); return; }
+    R.i++;
+    R.ans = blankAns(R.qs[R.i]);
+    R.locked = false;
+    viewRun(true);
+    return;
+  }
+  if(R.locked){ return; }
+  if(act === "pick"){ R.ans = parseInt(val, 10); lockRun(); return; }
+  if(act === "tog"){ i = parseInt(val, 10); R.ans[i] = !R.ans[i]; viewRun(false); return; }
+  if(act === "grp"){
+    parts = val.split(":");
+    R.ans[parseInt(parts[0], 10)] = parseInt(parts[1], 10);
+    viewRun(false);
+    return;
+  }
+  if(act === "ord"){
+    i = parseInt(val, 10);
+    if(R.ans.indexOf(i) >= 0){ R.ans.splice(R.ans.indexOf(i), 1); } else { R.ans.push(i); }
+    viewRun(false);
+    return;
+  }
+  if(act === "check"){
+    if(q.t === "txt" || q.t === "date"){
+      inp = document.getElementById("txtin");
+      if(!inp || !inp.value.replace(/\s/g, "")){ if(inp){ inp.focus(); } return; }
+      R.ans = inp.value;
+    } else if(!ready(q, R.ans)){ return; }
+    lockRun();
+    return;
+  }
+}
+
+loadProgress();
+render();
+
+/* offline: po prvom otvoreni sa appka ulozi do telefonu */
+if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){ /* bez offline rezimu appka funguje dalej */ });
+  });
+}
+</script>
+</body>
+</html>
